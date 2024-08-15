@@ -7,4 +7,6 @@ const server = http.createServer(routes)
 
 
 
-server.listen(4000);
+server.listen(4000,'0.0.0.0', () => {
+  console.log(`Server running at http://0.0.0.0:4000/`);
+});
