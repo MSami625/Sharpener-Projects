@@ -1,8 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const adminRoutes=require('./routes/admin');
-const ShopRoutes=require('./routes/shop');  
+const adminRoutes=require('./routes/login');
+const ShopRoutes=require('./routes/home');  
 
 
 const app=express();
@@ -10,9 +10,9 @@ const app=express();
 app.use(bodyParser.urlencoded({extended:false}));
 
 
-app.use("/admin",adminRoutes);
+app.use(adminRoutes);
 
-app.use("/shop",ShopRoutes);
+app.use(ShopRoutes);
 
 
 
