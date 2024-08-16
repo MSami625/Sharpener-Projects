@@ -1,0 +1,107 @@
+/* General Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f5f2;
+}
+
+header {
+    background-color: #ffffff;
+    padding: 30px 20px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+  
+}
+
+nav{
+    display: flex;
+    align-items: center;
+    margin: auto;
+    
+
+}
+
+.logo {
+    font-size: 24px;
+    color: #b0482b;
+    font-weight: bold;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 50px;
+    margin: 0;
+
+    padding: 0;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+
+.register-button {
+    background-color: #b0482b;
+    color: #ffffff !important;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.book-call-section {
+    padding: 50px 20px;
+    text-align: center;
+    background-color: #f8f5f2;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    color: #b0482b;
+    margin-bottom: 20px;
+}
+
+p {
+    color: #777;
+    margin-bottom: 30px;
+}
+
+.book-call-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.book-call-form label {
+    text-align: left;
+    font-weight: bold;
+    color: #333;
+}
+
+.book-call-form input {
+    padding: 10px;
+    border: 1px black solid;
+
+}
+
+button{
+    background-color: #6c2511;
+    border: 0;
+    padding: 10px;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}

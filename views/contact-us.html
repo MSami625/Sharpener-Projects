@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book a Call</title>
+    <link rel="stylesheet" href="/css/contact-us.css">
+</head>
+<body>
+    <header>
+         <div class="logo">Sharpener</div>
+        <nav>
+        
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/admin/add-product">Courses</a></li>
+                <li><a href="#">Hire With Us</a></li>
+                <li><a href="#">Pricing</a></li>
+                <li><a href="#" class="register-button">Register Now</a></li>
+            </ul>
+            
+        </nav>
+    </header>
+    <section class="book-call-section">
+        <div class="container">
+            <h2>Book a call</h2>
+            <p>Book a call slot and our representative will call you within 1hr of the selected time.</p>
+            <form action="/contact-us" method="POST" class="book-call-form">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+
+
+                <button type="submit">GET A CALL</button>
+            </form>
+        </div>
+    </section>
+</body>
+</html>
