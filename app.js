@@ -1,12 +1,18 @@
-const http=require('http');
-
-const routes=require('./routes');
+const express = require('express');
 
 
-const server = http.createServer(routes)
+const app=express();
 
-
-
-server.listen(4000,'0.0.0.0', () => {
-  console.log(`Server running at http://0.0.0.0:4000/`);
+app.use((req,res,next)=>{
+  console.log('First Middleware');
+  next();
 });
+
+app.use((req,res,next)=>{
+  console.log("Second Middleware")
+  res.send("<h1>Hello from Express</h1>") 
+})
+
+
+
+app.listen(3000)
