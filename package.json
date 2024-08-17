@@ -1,20 +1,23 @@
 {
-  "name": "sharpner-projects",
+  "name": "nodejs-complete-guide",
   "version": "1.0.0",
-  "description": "node js",
+  "description": "Complete Node.js Guide",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon app.js",
     "start-server": "node app.js"
   },
-  "author": "sami",
+  "author": "Maximilian Schwarzmüller",
   "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^1.18.3"
+  },
   "dependencies": {
-    "ejs": "^3.1.10",
-    "express": "^4.19.2",
-    "node-localstorage": "^3.0.5",
-    "nodemon": "^3.1.4",
-    "path": "^0.12.7"
+    "body-parser": "^1.18.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.3",
+    "express-handlebars": "^3.0.0",
+    "pug": "^2.0.3"
   }
 }
