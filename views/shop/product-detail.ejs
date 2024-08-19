@@ -3,17 +3,17 @@
 
     <body>
         <%- include('../includes/navigation.ejs') %>
-        <main class="centered">
+        <main  style="margin: 50px;" class="centered">
             <h1><%= product.title %></h1>
             <hr>
-            <div>
-                <img src="<%= product.imageUrl %>" alt="<%= product.title %>">
-            </div>
+            <div style=" margin:50px auto; width:50%; height: 1vh;">
+                <img style="width: 100%;" src="<%= product.imageUrl %>" alt="<%= product.title %>">
+            
             <h2><%= product.price %></h2>
             <p><%= product.description %></p>
             <form action="/cart" method="post">
                 <button class="btn" type="submit">Add to Cart</button>
                 <input type="hidden" name="productId"  value="<%= product.id%>">
-            </form>
+            </form></div>
         </main>
         <%- include('../includes/end.ejs') %>
