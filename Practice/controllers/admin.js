@@ -28,11 +28,8 @@ exports.postAddProduct = (req, res, next) => {
 
 exports.getEditProduct = (req, res, next) => {
   const editMode = req.query.edit;
-  if (!editMode) {
-    return res.redirect("/");
-  }
-  const prodId = req.params.productId;
-  Product.findById(prodId, (product) => {
+   const prodId = req.params.productId;
+  Product.findByPk(prodId).then(product=> {
     if (!product) {
       return res.redirect("/");
     }
@@ -51,14 +48,19 @@ exports.postEditProduct = (req, res, next) => {
   const updatedPrice = req.body.price;
   const updatedImageUrl = req.body.imageUrl;
   const updatedDesc = req.body.description;
-  const updatedProduct = new Product(
-    prodId,
-    updatedTitle,
-    updatedImageUrl,
-    updatedDesc,
-    updatedPrice
-  );
-  updatedProduct.save();
+
+  Product.update({
+    title: updatedTitle,
+    price: updatedPrice,
+    imageUrl: updatedImageUrl,
+    description: updatedDesc,
+  },{
+    where: {
+      id: `${prodId}`,
+    },
+  })
+    .then((res) => console.log(res))
+    .catch((err) => console.log(err));
   res.redirect("/admin/products");
 };
 
