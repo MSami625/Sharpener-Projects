@@ -40,7 +40,7 @@ app.post("/", (req, res, next) => {
     });
 
   
-});
+})
 
 
 app.delete("/:id", (req, res, next) => {
