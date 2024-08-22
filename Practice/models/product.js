@@ -1,50 +1,27 @@
-const Sequelize = require("sequelize");
-const sequelize = require("../util/database");
+const Sequelize = require('sequelize');
 
-const Product = sequelize.define(
-  "product",
-  {
-    id: {
-      type: Sequelize.INTEGER,
-      autoIncrement: true,
-      allowNull: false,
-      primaryKey: true,
-    },
-    title: {
-      type: Sequelize.STRING,
-      allowNull: false,
-    },
-    price: {
-      type: Sequelize.DOUBLE,
-      allowNull: false,
-    },
-    imageUrl: {
-      type: Sequelize.STRING,
-      allowNull: false,
-    },
-    description: {
-      type: Sequelize.TEXT,
-      allowNull: false,
-    },
-  },
-  {
-    timestamps: true, // Ensures createdAt and updatedAt columns are managed
-  }
-);
+const sequelize = require('../util/database');
 
-const Cart = sequelize.define("cart", {
+const Product = sequelize.define('product', {
   id: {
     type: Sequelize.INTEGER,
     autoIncrement: true,
     allowNull: false,
-    primaryKey: true,
+    primaryKey: true
   },
+  title: Sequelize.STRING,
   price: {
     type: Sequelize.DOUBLE,
-    allowNull: false,
+    allowNull: false
   },
- 
-
-}); 
+  imageUrl: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  description: {
+    type: Sequelize.STRING,
+    allowNull: false
+  }
+});
 
 module.exports = Product;
