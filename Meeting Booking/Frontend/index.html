@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Schedule Slots</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #f5f7fa;
+        margin: 0;
+        padding: 20px;
+        overflow-y: scroll;
+      }
+
+      .container {
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        position: relative;
+        margin-bottom: 50px;
+      }
+
+      .slots {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .slot {
+        background-color: #e0f1ff;
+        border: 2px solid #000000;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .slot:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .slot span {
+        color: #4a90e2;
+        font-weight: 600;
+      }
+
+      .modal {
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        width: 300px;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        position: absolute;
+        top: -10px;
+        left: 300px;
+        gap: 10px;
+      }
+
+      .modal input[type="text"],
+      .modal input[type="email"] {
+        width: 95%;
+        padding: 10px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+
+      .modal button {
+        background-color: #4a90e2;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .modal button:hover {
+        background-color: #357ab8;
+      }
+      .modal p {
+        margin: 0;
+      }
+
+      .confirmation {
+        background-color: #e6f7ff;
+        padding: 15px;
+        border-left: 5px solid #4a90e2;
+        border-radius: 5px;
+        display: none;
+        width: 300px;
+        text-align: center;
+        margin-bottom: 20px;
+        margin-left: 25px;
+      }
+
+      .confirmation a {
+        color: #4a90e2;
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .scheduled-meetings {
+        width: 100%;
+        max-width: 1200px;
+        margin-top: 30px;
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+
+      .meeting {
+        background-color: #fff;
+        border: 2px solid #4a90e2;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        min-width: 200px;
+        display: flex;
+        gap: 10px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .meeting a {
+        color: #4a90e2;
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .cancel-btn {
+        background-color: #0b0b0b;
+        color: #e24a4a;
+        color: white;
+        border: 2px solid #000000;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease, color 0.3s ease;
+      }
+
+      .cancel-btn:hover {
+        background-color: #eb1111;
+        color: white;
+        border-color: #ffffff;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Available Slots (select any)</h1>
+    <div class="container">
+      <div class="slots"></div>
+
+      <form onsubmit="handleFormSubmit(event)">
+        <div class="modal" id="modalForm">
+          <p>Slot Confirmation</p>
+          <b id="slotTime"></b>
+          <input type="hidden" id="slotId" />
+          <input type="text" id="name" placeholder="Your Name" />
+          <input type="email" id="email" placeholder="Your Email" />
+          <button type="submit" id="confirmSlot">Confirm Slot</button>
+        </div>
+      </form>
+
+      <div class="confirmation" id="confirmationMessage">
+        <b id="resMsg"></b>
+       Please do join at <span id="ConfSlotTime"></span> via
+        <a href="https://meet.google.com/syj-cvrt-njo" target="_blank"
+          >Google Meet Link</a
+        >.
+      </div>
+    </div>
+
+    <hr />
+    <b>Scheduled-Meetings</b>
+
+    <div class="scheduled-meetings" id="scheduledMeetings"></div>
+  </body>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js"></script>
+  <script src="index.js"></script>
+</html>

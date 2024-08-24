@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", fetchExpenses);
-
+let c_id=null;
 async function handleFormSubmit(event) {
   event.preventDefault();
   let path = event.target;
@@ -13,7 +13,7 @@ async function handleFormSubmit(event) {
     // Post data
     await axios.post("http://localhost:3001/", obj);
 
-    fetchExpenses();
+     
   } catch (error) {
     console.error("Error handling form submit:", error);
   }
