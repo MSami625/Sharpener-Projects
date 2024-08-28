@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", fetchExpenses);
-let c_id=null;
+
+var c_id = null;
+
 async function handleFormSubmit(event) {
   event.preventDefault();
   let path = event.target;
@@ -9,31 +11,37 @@ async function handleFormSubmit(event) {
     category: path.category.value,
   };
 
+
   try {
     // Post data
-    await axios.post("http://localhost:3001/", obj);
-
-     
+    if (c_id != null) {
+      await axios.put(`http://localhost:3001/${c_id}`, obj);
+      c_id = null;
+      setTimeout(fetchExpenses, 100);
+    } else {
+      await axios.post("http://localhost:3001/", obj);
+      setTimeout(fetchExpenses, 100);
+    }
   } catch (error) {
     console.error("Error handling form submit:", error);
   }
 }
 
+
+
 async function fetchExpenses() {
   const expenseList = document.getElementById("list-group");
-
   try {
-    const res = await axios.get("http://localhost:3001/expenses");
-    console.log("Expenses data:", res.data);
+    const res = await axios.get("http://localhost:3001/");
 
     const expenses = res.data;
-    // Update UI
+
     expenseList.innerHTML = "";
 
     expenses.forEach((expense) => {
       const li = document.createElement("li");
       li.className = "list-group-item";
-      li.textContent = `${expense.amount} - ${expense.description} - ${expense.category}`;
+      li.innerHTML = `<input value=${expense.id} type="hidden"/>${expense.amount} - ${expense.description} - ${expense.category}`;
 
       // Create and add Delete button
       const delbtn = document.createElement("button");
@@ -44,8 +52,7 @@ async function fetchExpenses() {
           li.remove();
         }
         try {
-          // Remove from server
-          await axios.delete(`http://localhost:3001/expenses/${expense.id}`);
+          await axios.delete(`http://localhost:3001/${expense.id}`);
           // Remove from UI
           li.remove();
           // Remove from localStorage if needed
@@ -63,6 +70,7 @@ async function fetchExpenses() {
         document.getElementById("amount").value = expense.amount;
         document.getElementById("description").value = expense.description;
         document.getElementById("category").value = expense.category;
+        c_id = expense.id;
         localStorage.removeItem(expense.category);
         li.remove();
       });
@@ -75,4 +83,3 @@ async function fetchExpenses() {
     console.error("Error fetching expenses:", error);
   }
 }
-

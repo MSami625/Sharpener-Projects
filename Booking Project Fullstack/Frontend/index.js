@@ -30,7 +30,7 @@ async function displayUser(){
             const editButton = document.createElement("button");
             editButton.textContent = "Edit";
    
-            li.textContent = `Name: ${user.Name} Email: ${user.Email} Phone: ${user.phoneNumber} `;
+            li.innerHTML = `Name: ${user.Name} |  Email: ${user.Email} |  Phone: ${user.phoneNumber} `;
              li.appendChild(deleteButton);
             li.appendChild(editButton);
            

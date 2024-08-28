@@ -1,5 +1,5 @@
 const express = require("express");
-const User = require("./models/user");
+const UserBookings = require("./models/user");
 const sequelize = require("./util/database");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -10,7 +10,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.get("/", (req, res, next) => {
-  User.findAll()
+  UserBookings.findAll()
     .then((users) => {
       res.json(users);
     })
@@ -25,15 +25,13 @@ app.post("/", (req, res, next) => {
   const email = req.body.email;
   const phone = req.body.phone;
 
- 
-
-  User.create({
+  UserBookings.create({
     Name: name,
     Email: email,
     phoneNumber: phone,
   })
     .then((result) => {
-      console.log(result);
+      res.send("User created");
     })
     .catch((err) => {
       console.log(err);
@@ -44,7 +42,7 @@ app.post("/", (req, res, next) => {
 
 
 app.delete("/:id", (req, res, next) => {
-  User.findByPk(req.params.id).then((user) => { 
+  UserBookings.findByPk(req.params.id).then((user) => { 
     return user.destroy();
 
   }).catch((err) => {
@@ -52,16 +50,17 @@ app.delete("/:id", (req, res, next) => {
   });
 })
 
-app.put("/:id", (req, res, next) => {
-  User.findByPk(req.params.id).then((user) => {
-    user.Name = req.body.Name;
-    user.Email = req.body.Email;
-    user.phoneNumber = req.body.phoneNumber;
-    return user.save();
-  }).catch((err) => {
-    console.log(err); 
-  });
-})
+
+// app.put("/:id", (req, res, next) => {
+//   UserBookings.findByPk(req.params.id).then((user) => {
+//     user.Name = req.body.Name;
+//     user.Email = req.body.Email;
+//     user.phoneNumber = req.body.phoneNumber;
+//     return user.save();
+//   }).catch((err) => {
+//     console.log(err); 
+//   });
+// })
 
 sequelize
   .sync()

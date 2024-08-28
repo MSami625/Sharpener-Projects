@@ -29,6 +29,7 @@ function displayModalForm(time, id) {
   const confirmation = document.querySelector(".confirmation");
   confirmation.style.display = "none";
 
+
   const modal = document.querySelector(".modal");
   modal.style.display = "flex";
 
@@ -70,6 +71,7 @@ let resMsg;
     }else{
   const ConfSlotTime = document.querySelector("#ConfSlotTime");
   ConfSlotTime.textContent = time;
+  ConfSlotTime.textContent+="  ("+name+")  ";
   const confirmation = document.querySelector(".confirmation");
   confirmation.style.display = "block";
   const confMsg=document.querySelector("#resMsg");
