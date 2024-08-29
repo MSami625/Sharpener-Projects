@@ -30,7 +30,7 @@ exports.login=(req,res,next)=>{
             return res.status(404).json({message:"User does not exist"})
           }
          if(user.password!==password){
-            return res.status(400).json({message:"Wrong Password"});
+            return res.status(401).json({message:"Wrong Password"});
           }
           
           
