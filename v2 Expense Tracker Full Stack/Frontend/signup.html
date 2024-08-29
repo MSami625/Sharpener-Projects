@@ -16,7 +16,7 @@
         <div class="form-container">
             <h1>Sign Up</h1>
             <hr>
-            <form id="SignUpForm" action="/user/login" method="post">
+            <form id="SignUpForm" onsubmit="handleFormSubmit(event)" >
                 <div class="input-group">
                     <input type="text" id="name" name="name" placeholder="Name" required>
                 </div>
@@ -35,6 +35,8 @@
             </form>
         </div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js"></script>
     <script src="script.js"></script>
+    
 </body>
 </html>
