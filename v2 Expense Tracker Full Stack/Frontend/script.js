@@ -15,7 +15,7 @@ async function handleFormSubmitSignUp(e){
     }
 
     const res= await axios.post("http://localhost:4000/signup",userDetails);
-    console.log(res.data.message);
+    alert(res.data.message);
 
 
 }catch(err){
