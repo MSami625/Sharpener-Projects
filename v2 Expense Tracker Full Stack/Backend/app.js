@@ -1,25 +1,34 @@
+require('dotenv').config();
 const express = require("express");
 const sequelize = require("./util/database");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const authRoute = require("./routes/authRoute");
 const expensesRoute = require("./routes/expensesRoute");
+const Expense = require("./models/Expense");  
+const User = require("./models/User");
+
+
 
 const app = express();
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
+
+
+User.hasMany(Expense);
+Expense.belongsTo(User,{ constraints: true, onDelete: "CASCADE" });
 
 
 app.use('/',authRoute);
-app.use('/expenses',expensesRoute);
+app.use('/',expensesRoute);
 
 
 
 
 
 sequelize
-  // .sync({ alter: true })
+  // .sync({ force: true })
   .sync()
   .then((result) => {
     console.log(result);

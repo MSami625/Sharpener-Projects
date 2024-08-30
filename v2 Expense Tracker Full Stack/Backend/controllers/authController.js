@@ -1,6 +1,9 @@
 // Version: 1.0
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 exports.signUp = (req, res, next) => {
   const { name, email, password } = req.body;
@@ -28,6 +31,7 @@ exports.signUp = (req, res, next) => {
 exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
+
   User.findOne({ where: { email } })
     .then((user) => {
       if (!user) {
@@ -41,11 +45,19 @@ exports.login = (req, res, next) => {
       }
 
       //found user
-      return res.status(200).json({ message: "User logged in successfully" });
+      const token = createJWT(user);
+    
+      return res.status(200).json({ message: "User logged in successfully" , token:token});
     })
+
 
     .catch((err) => {
       res.status(500).json({ message: "Internal Server Error" });
       console.log(err);
     });
 };
+
+
+function createJWT(user) {
+  return jwt.sign({ userId: user.id },JWT_SECRET); 
+}
