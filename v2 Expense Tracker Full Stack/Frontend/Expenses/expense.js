@@ -5,17 +5,19 @@ var c_id = null;
 async function handleFormSubmit(event) {
   event.preventDefault();
   let path = event.target;
+  const token= localStorage.getItem("token");
+
   let obj = {
     amount: path.amount.value,
     description: path.description.value,
     category: path.category.value,
+    token: token,
   };
 
-  console.log(obj);
   try {
     // Post data
     if (c_id != null) {
-      await axios.put(`http://localhost:4000/expenses/${c_id}`, obj);
+      await axios.put(`http://localhost:4000/user/expenses/${c_id}`, obj);
       c_id = null;
       setTimeout(fetchExpenses, 100);
     } else {
@@ -28,11 +30,12 @@ async function handleFormSubmit(event) {
 }
 
 async function fetchExpenses() {
-  const expenseList = document.getElementById("list-group");
+  const expenseList = document.getElementById("list-group"); 
+     const token = localStorage.getItem("token");  
   try {
-    const res = await axios.get("http://localhost:4000/expenses");
+  
+    const res = await axios.get(`http://localhost:4000/user/expenses/${token}`);
     const expenses = res.data;
-
 
     expenseList.innerHTML = "";
 
@@ -52,7 +55,7 @@ async function fetchExpenses() {
         const delbtn = tr.querySelector(".del-btn");
         delbtn.addEventListener("click", async () => {
           try {
-            await axios.delete(`http://localhost:4000/expenses/${expense.id}`);
+            await axios.delete(`http://localhost:4000/user/expenses/${expense.id}`);
             await fetchExpenses();
           } catch (error) {
             console.error("Error deleting expense:", error);

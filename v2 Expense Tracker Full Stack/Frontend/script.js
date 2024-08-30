@@ -1,58 +1,54 @@
 // SingUp Functionality
-async function handleFormSubmitSignUp(e){
-    try{
+async function handleFormSubmitSignUp(e) {
+  try {
     e.preventDefault();
 
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-    const name=document.getElementById('name').value;
-    const email=document.getElementById('email').value;
-    const password=document.getElementById('password').value;   
+    const userDetails = {
+      name,
+      email,
+      password,
+    };
 
-    const userDetails={
-        name,
-        email,
-        password,
-    }
-
-    const res= await axios.post("http://localhost:4000/signup",userDetails);
+    const res = await axios.post("http://localhost:4000/signup", userDetails);
     alert(res.data.message);
+  
     window.location.href = "./login.html";
-
-}catch(err){
+  } catch (err) {
     if (err.response && err.response.data && err.response.data.message) {
-        alert(err.response.data.message);
+      alert(err.response.data.message);
     } else {
-        alert("An error occurred. Please try again.");
+      alert("An error occurred. Please try again.");
     }
-
+  }
 }
-}
-
 
 //Login Functionality
-async function handleFormSubmitLogin(e){
-    try{
+async function handleFormSubmitLogin(e) {
+  localStorage.clear();
+  try {
     e.preventDefault();
 
-    const email=document.getElementById('email').value;
-    const password=document.getElementById('password').value;   
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-    const userDetails={
-        email,
-        password,
-    }
-    
+    const userDetails = {
+      email,
+      password,
+    };
 
-    const res=await axios.post("http://localhost:4000/login",userDetails);  
+    const res = await axios.post("http://localhost:4000/login", userDetails);
     alert(res.data.message);
-    // window.location.href = "./Expenses/expenses.html"; 
-
-
-}catch(err){
+    localStorage.setItem("token", res.data.token);
+    window.location.href = "./Expenses/expenses.html";
+  } catch (err) {
     if (err.response && err.response.data && err.response.data.message) {
-        alert(err.response.data.message);
+      alert(err.response.data.message);
     } else {
-        alert("An error occurred. Please try again.");
+      alert("An error occurred. Please try again.");
     }
-}
+  }
 }
