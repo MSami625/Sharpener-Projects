@@ -7,6 +7,8 @@ const authRoute = require("./routes/authRoute");
 const expensesRoute = require("./routes/expensesRoute");
 const Expense = require("./models/Expense");  
 const User = require("./models/User");
+const Order = require("./models/Order");
+const paymentRoute = require("./routes/purchasePremiumRoute");
 
 
 
@@ -18,17 +20,19 @@ app.use(express.json());
 
 User.hasMany(Expense);
 Expense.belongsTo(User,{ constraints: true, onDelete: "CASCADE" });
+User.hasMany(Order);
+Order.belongsTo(User,{ constraints: true, onDelete: "CASCADE" }); 
 
 
 app.use('/',authRoute);
 app.use('/',expensesRoute);
-
+app.use('/',paymentRoute);
 
 
 
 
 sequelize
-  // .sync({ force: true })
+  // .sync({ alter: true })
   .sync()
   .then((result) => {
     console.log(result);

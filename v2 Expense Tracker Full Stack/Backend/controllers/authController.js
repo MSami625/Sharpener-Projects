@@ -46,8 +46,12 @@ exports.login = (req, res, next) => {
 
       //found user
       const token = createJWT(user);
+      if(user.isPremiumUser){
+        return res.status(200).json({ message: "User logged in successfully" , token:token, isPremiumUser:true});
+      }else{
+        return res.status(200).json({ message: "User logged in successfully" , token:token, isPremiumUser:false});
+      }
     
-      return res.status(200).json({ message: "User logged in successfully" , token:token});
     })
 
 

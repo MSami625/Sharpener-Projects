@@ -116,12 +116,109 @@
     .edit-btn:hover {
       background-color: #218838;
     }
+ 
+
+#rzp-button1 {
+    background-color: #ff6f61; 
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+#rzp-button1:hover {
+    background: linear-gradient(135deg, #ff6f61 0%, #ff3f3f 100%);
+    transform: translateY(-2px); 
+}
+
+
+#rzp-button1:active {
+    background: linear-gradient(135deg, #ff3f3f 0%, #ff6f61 100%);
+    transform: translateY(0px); 
+}
+
+
+#rzp-button1:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 105, 97, 0.5); 
+}
+
+.premium-badge {
+    position: relative; 
+    background-color: #4CAF50; 
+    color: white; 
+    border: none; 
+    border-radius: 12px; 
+    padding: 10px 20px; 
+    font-size: 16px; 
+    font-weight: bold;
+    cursor: not-allowed;
+    text-align: center; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.premium-badge:disabled {
+    background-color: #2c6e49; /* Darker green when disabled */
+}
+
+/* Glitter effect */
+.premium-badge::before,
+.premium-badge::after {
+    content: "";
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0.7) 70%);
+    opacity: 0.8;
+    animation: glitter 1.5s infinite linear;
+    pointer-events: none; /* Make sure the glitter doesn't interfere with clicking */
+}
+
+.premium-badge::before {
+    transform: rotate(0deg);
+}
+
+.premium-badge::after {
+    transform: rotate(60deg);
+}
+
+@keyframes glitter {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 100% 100%;
+    }
+}
+
+.premium-badge:hover {
+    transform: scale(1.05); /* Slightly enlarge the button */
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.8); /* Gold glow effect */
+}
+
+.premium-badge:hover::before,
+.premium-badge:hover::after {
+    animation: glitter 1s infinite linear; /* Speed up the glitter animation */
+}
+
   </style>
 </head>
 
 <body>
-  <div class="container">
+  <div class="container"> 
+    <button id="rzp-button1" onclick="handlePayment(event)">Buy Premium </button>
     <div class="row">
+     
       <div class="form-container">
         <h1>Expense Tracker</h1>
         <form onsubmit="handleFormSubmit(event)" id="expense-form">
@@ -168,6 +265,7 @@
 
   <!-- Bootstrap JS and your script -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js"></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
