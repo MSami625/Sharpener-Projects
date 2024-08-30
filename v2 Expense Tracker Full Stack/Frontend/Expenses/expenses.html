@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expense Tracker</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f4f7f6;
+      color: #333;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      margin-top: 40px;
+      max-width: 1200px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 20px;
+    }
+
+    .form-container {
+      background-color: #ffffff;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+
+    .form-container h1 {
+      color: #004085;
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    .form-container .btn-primary {
+      background-color: #0056b3;
+      border: none;
+      border-radius: 0.5rem;
+      padding: 10px 20px;
+      font-size: 1rem;
+    }
+
+    .form-container .btn-primary:hover {
+      background-color: #003d80;
+      box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.2);
+    }
+
+    .expenses-container {
+      background-color: #ffffff;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+
+    .expenses-container h2 {
+      color: #004085;
+      font-size: 1.75rem;
+      margin-bottom: 15px;
+    }
+
+    .expenses-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .expenses-table thead {
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    .expenses-table th, .expenses-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .expenses-table tbody tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .expenses-table tbody tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .btn-action {
+      border: none;
+      border-radius: 0.5rem;
+      padding: 5px 10px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .del-btn {
+      background-color: #dc3545;
+    }
+
+    .del-btn:hover {
+      background-color: #c82333;
+    }
+
+    .edit-btn {
+      background-color: #28a745;
+    }
+
+    .edit-btn:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="form-container">
+        <h1>Expense Tracker</h1>
+        <form onsubmit="handleFormSubmit(event)" id="expense-form">
+          <div class="form-group">
+            <label for="amount">Enter Expense Amount:</label>
+            <input type="number" class="form-control" id="amount" name="amount" required>
+          </div>
+          <div class="form-group">
+            <label for="description">Enter Description:</label>
+            <input type="text" class="form-control" id="description" name="description" required>
+          </div>
+          <div class="form-group">
+            <label for="category">Choose a Category:</label>
+            <select class="form-control" id="category" name="category" required>
+              <option value="food">Food</option>
+              <option value="transport">Transport</option>
+              <option value="clothes">Clothes</option>
+              <option value="bills">Bills</option>
+              <option value="others">Others</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Expense</button>
+        </form>
+      </div>
+
+      <div class="expenses-container">
+        <h2>Expenses</h2>
+        <table class="expenses-table">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th>Category</th>
+              <th>Amount</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="list-group">
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS and your script -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="expense.js"></script>
+</body>
+
+</html>

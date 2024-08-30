@@ -16,10 +16,14 @@ async function handleFormSubmitSignUp(e){
 
     const res= await axios.post("http://localhost:4000/signup",userDetails);
     alert(res.data.message);
-
+    window.location.href = "./login.html";
 
 }catch(err){
-    alert(err.response.data.message);
+    if (err.response && err.response.data && err.response.data.message) {
+        alert(err.response.data.message);
+    } else {
+        alert("An error occurred. Please try again.");
+    }
 
 }
 }
@@ -41,10 +45,14 @@ async function handleFormSubmitLogin(e){
 
     const res=await axios.post("http://localhost:4000/login",userDetails);  
     alert(res.data.message);
-
+    // window.location.href = "./Expenses/expenses.html"; 
 
 
 }catch(err){
-    alert(err.response.data.message);
+    if (err.response && err.response.data && err.response.data.message) {
+        alert(err.response.data.message);
+    } else {
+        alert("An error occurred. Please try again.");
+    }
 }
 }
