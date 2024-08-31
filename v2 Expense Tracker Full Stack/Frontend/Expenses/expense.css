@@ -3,13 +3,113 @@ body {
     color: #333;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
-    padding: 10px;
+    padding: 0;
 }
 
-.container {
-    margin-top: 40px;
-    max-width: 1200px;
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #004085;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
 }
+
+header button, header a {
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    margin-left: 15px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+header button:hover, header a:hover {
+    background-color: #003d80;
+    transform: translateY(-2px);
+}
+
+header button:active, header a:active {
+    background-color: #003d80;
+    transform: translateY(1px);
+}
+
+header a {
+    display: inline-block;
+    font-weight: bold;
+}
+
+header button {
+    background-color: #ff6f61;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+header button:hover {
+    background-color: #e65c50;
+    transform: translateY(-2px);
+}
+
+header button:active {
+    background-color: #cc4a40;
+    transform: translateY(1px);
+}
+
+header #login-button {
+    background-color: #007bff;
+}
+
+header #login-button:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px;
+    }
+
+    header button, header a {
+        width: 100px;
+        margin-left: 0;
+        margin-bottom: 10px;
+        text-align: center;
+        padding: 5px;
+    }
+    #premiumBtn
+    {
+        font-size: 10px;
+        padding: 5px;
+    }
+    #login-button{
+        padding: 5px 0px !important;
+        width: 60px;
+        font-size: 10px !important;
+        top: 25px !important;
+    }
+
+    header button:last-of-type, header a:last-of-type {
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    body{
+        padding: 20px;
+    }
+
+}
+
 
 .row {
     display: grid;
@@ -318,6 +418,8 @@ label{
     background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+   
 }
 
 /* Button styling */

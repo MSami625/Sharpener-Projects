@@ -5,14 +5,17 @@ const secret = process.env.JWT_SECRET;
 
 exports.getAllExpenses = (req, res, next) => {
 
+  try{
+
   const token = req.params.token;
   const verifyResult = jwt.verify(token, secret);
   const userId = verifyResult.userId;
-  
+  const isPremiumUser = verifyResult.isPremiumUser;
+   
 
   Expense.findAll({ where: { userId: userId } })
     .then((expenses) => {
-      res.status(200).json(expenses);
+      res.status(200).json({expenses, isPremiumUser});
     })
     .catch((err) => {
       console.log(err);
@@ -20,15 +23,22 @@ exports.getAllExpenses = (req, res, next) => {
         message: "Something went wrong",
       });
     });
+  }catch(err){
+    console.error(err);
+    res.status(500).json({
+      message: "Something went wrong",
+    });
+  }
 };
 
 exports.createExpense =async  (req, res, next) => {
+
   const { amount, description, category,token } = req.body;
 
-  const verifyResult = jwt.verify(token, secret);
-  const userId = verifyResult.userId;
 
   try {
+  const verifyResult = jwt.verify(token, secret);
+  const userId = verifyResult.userId;
    
     const user = await User.findByPk(userId);
     
@@ -48,6 +58,7 @@ exports.createExpense =async  (req, res, next) => {
 
     user.totalExpense = totalExpense + newAmount;
     await user.save();
+    const isPremiumUser=user.isPremiumUser;
 
     // Step 4: Respond with a success message
     res.status(201).json({
@@ -58,6 +69,7 @@ exports.createExpense =async  (req, res, next) => {
         category: category,
       },
       totalExpense: user.totalExpense,
+      isPremiumUser:isPremiumUser
     });
   } catch (err) {
     console.error(err);
@@ -76,8 +88,23 @@ exports.deleteExpense = (req, res, next) => {
       if (!expense) {
         return res.status(404).json({ message: "Expense not found" });
       } else {
+        const amount=expense.amount;
         expense.destroy();
-        res.status(200).json({ message: "Expense deleted successfully" });
+
+        User.findByPk(expense.userId)
+          .then((user) => {
+            const totalExpense = parseFloat(user.totalExpense);
+            const newAmount = parseFloat(amount);
+
+            user.totalExpense = totalExpense - newAmount;
+            user.save(); 
+            res.status(200).json({ message: "Expense deleted successfully", isPremiumUser:user.isPremiumUser,totalExpense:user.totalExpense });
+          })
+          .catch((err) => {
+            console.log(err);
+            res.status(500).json({ message: "Something went wrong on Deletion of records" });
+          })
+       
       }
     })
     .catch((err) => {

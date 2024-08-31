@@ -6,22 +6,27 @@ const leaderboardBtn = document.getElementById("show-leaderboard");
 const leaderboardContainer=document.querySelector("#leaderboard-container");
 
 
+
 const auth = localStorage.getItem("auth");
+
 if (auth) {
   const decoded = jwt_decode(auth);
   const isPremiumUser = decoded.isPremiumUser;
   if (isPremiumUser === true) {
   premiumBtn.outerHTML = `<button id="premiumBtn" class="premium-badge" disabled>You're a Premium User</button>`
-  leaderboardBtn.outerHTML = ` <button id="show-leaderboard"  onclick="showLeaderboard()">Show Leaderboard</button>`;
+  leaderboardBtn.outerHTML = ` <button id="show-leaderboard" onclick="showLeaderboard()">Show Leaderboard</button>`;
   leaderboardContainer.style.display = 'block';
+  }
 }
-}
+
 
 var c_id = null;
 
 async function handleFormSubmit(event) {
   event.preventDefault();
-  let path = event.target;
+  let path = event.target; 
+
+  try {
   const token= localStorage.getItem("auth");
 
   let obj = {
@@ -31,14 +36,14 @@ async function handleFormSubmit(event) {
     token: token,
   };
 
-  try {
+ 
     // Post data
     if (c_id != null) {
       await axios.put(`http://localhost:4000/user/expenses/${c_id}`, obj);
       c_id = null;
       setTimeout(fetchExpenses, 100);
     } else {
-      await axios.post("http://localhost:4000/expenses", obj);
+      const res= await axios.post("http://localhost:4000/expenses", obj);
       setTimeout(fetchExpenses, 100);
       
       //clean up the form
@@ -46,7 +51,9 @@ async function handleFormSubmit(event) {
       path.description.value = "";
       path.category.value = "";
 
+      if(res.data.isPremiumUser){
       setTimeout(showLeaderboard,500);
+      }
     }
   } catch (error) {
     console.error("Error handling form submit:", error);
@@ -56,12 +63,12 @@ async function handleFormSubmit(event) {
 async function fetchExpenses() {
 
   const expenseList = document.getElementById("list-group"); 
-  const token = localStorage.getItem("auth");  
+ 
      
   try {
-  
+    const token = localStorage.getItem("auth");  
     const res = await axios.get(`http://localhost:4000/user/expenses/${token}`);
-    const expenses = res.data;
+    const expenses = res.data.expenses;
 
     expenseList.innerHTML = "";
 
@@ -81,12 +88,16 @@ async function fetchExpenses() {
         const delbtn = tr.querySelector(".del-btn");
         delbtn.addEventListener("click", async () => {
           try {
-            await axios.delete(`http://localhost:4000/user/expenses/${expense.id}`,{
+           const res= await axios.delete(`http://localhost:4000/user/expenses/${expense.id}`,{
               headers: {  
                 Authorization: `Bearer ${token}`
               }
             });
             await fetchExpenses();
+            if(res.data.isPremiumUser){
+            await showLeaderboard();
+            }
+
           } catch (error) {
             console.error("Error deleting expense:", error);
           }
@@ -117,19 +128,25 @@ async function fetchExpenses() {
   }
 }
 
+function handleLogOut(){
+  localStorage.clear();
+  window.location.href = "../login.html";
+
+}
+
 async function handlePayment(e) {
   e.preventDefault(); 
 
-  const token = localStorage.getItem('auth');
+    try {
+      const token = localStorage.getItem('auth');
 
-  try {
+
       const response = await axios.get('http://localhost:4000/user/purchasePremium', {
           headers: {
               'Authorization': `Bearer ${token}` 
           }
       });
 
-      console.log("Response from purchasePremium:", response.data);
 
       const { key_id, order } = response.data;
       const order_id = order.orderId; 
@@ -161,7 +178,7 @@ async function handlePayment(e) {
           },
           "modal": {
               "ondismiss": function () {
-                  console.log('Payment modal dismissed');
+                  alert('Payment Cancelled');
               }
           }
       };
@@ -193,8 +210,8 @@ async function showLeaderboard() {
   const leaderboard = response.data.leaderboard;
   const tableBody = document.getElementById('leaderboard-body');
     
-  tableBody.innerHTML = ''; // Clear any existing rows
-  console.log(response.data);
+  tableBody.innerHTML = ''; 
+ 
   leaderboard.forEach((entry, index) => {
     const row = document.createElement('tr');
     row.innerHTML = `

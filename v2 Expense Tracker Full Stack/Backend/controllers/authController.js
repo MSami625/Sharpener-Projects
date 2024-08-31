@@ -28,7 +28,7 @@ exports.signUp = (req, res, next) => {
     });
 };
 
-exports.login = (req, res, next) => {
+exports.login = (req, res) => {
   const { email, password } = req.body;
 
   User.findOne({ where: { email } })
