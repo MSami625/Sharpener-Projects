@@ -31,7 +31,6 @@ exports.signUp = (req, res, next) => {
 exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
-
   User.findOne({ where: { email } })
     .then((user) => {
       if (!user) {
@@ -46,22 +45,17 @@ exports.login = (req, res, next) => {
 
       //found user
       const token = createJWT(user);
-      if(user.isPremiumUser){
-        return res.status(200).json({ message: "User logged in successfully" , token:token, isPremiumUser:true});
-      }else{
-        return res.status(200).json({ message: "User logged in successfully" , token:token, isPremiumUser:false});
-      }
-    
+      res.status(200).json({ message: "User logged in successfully", token });
     })
-
-
     .catch((err) => {
       res.status(500).json({ message: "Internal Server Error" });
       console.log(err);
     });
 };
 
-
 function createJWT(user) {
-  return jwt.sign({ userId: user.id },JWT_SECRET); 
+  return jwt.sign(
+    { userId: user.id, isPremiumUser: user.isPremiumUser },
+    JWT_SECRET
+  );
 }

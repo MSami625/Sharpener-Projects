@@ -8,6 +8,7 @@ exports.getAllExpenses = (req, res, next) => {
   const token = req.params.token;
   const verifyResult = jwt.verify(token, secret);
   const userId = verifyResult.userId;
+  
 
   Expense.findAll({ where: { userId: userId } })
     .then((expenses) => {

@@ -8,6 +8,8 @@ exports.purchasePremium = async (req, res, next) => {
             key_secret: process.env.RAZORPAY_KEY_SECRET
         });
 
+    const result= jwt.verify(token,process.env.JWT_SECRET);
+
         const amount = 99 * 100; // Convert INR to paise
         rzp.orders.create({ amount, currency: 'INR', receipt: 'order_rcptid_11', payment_capture: '1' }, async function (error, order) {
             if (error) {

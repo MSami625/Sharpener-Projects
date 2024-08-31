@@ -42,8 +42,7 @@ async function handleFormSubmitLogin(e) {
 
     const res = await axios.post("http://localhost:4000/login", userDetails);
     alert(res.data.message);
-    localStorage.setItem("token", res.data.token);
-    localStorage.setItem("isPremiumUser", res.data.isPremiumUser);
+    localStorage.setItem("auth", res.data.token);
     window.location.href = "./Expenses/expenses.html";
   } catch (err) {
     if (err.response && err.response.data && err.response.data.message) {

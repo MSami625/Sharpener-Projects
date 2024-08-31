@@ -9,6 +9,7 @@ const Expense = require("./models/Expense");
 const User = require("./models/User");
 const Order = require("./models/Order");
 const paymentRoute = require("./routes/purchasePremiumRoute");
+const premiumRoute = require("./routes/premiumRoute");
 
 
 
@@ -27,6 +28,7 @@ Order.belongsTo(User,{ constraints: true, onDelete: "CASCADE" });
 app.use('/',authRoute);
 app.use('/',expensesRoute);
 app.use('/',paymentRoute);
+app.use('/',premiumRoute)
 
 
 
