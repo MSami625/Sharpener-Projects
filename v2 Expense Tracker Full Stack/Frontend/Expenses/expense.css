@@ -307,6 +307,7 @@ label{
     border-radius: 0.5rem;
     padding: 10px 20px;
     font-size: 1rem;
+    margin-top: 20px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }

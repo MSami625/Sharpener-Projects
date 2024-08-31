@@ -4,34 +4,23 @@ const Expense = require('../models/Expense');
 
 exports.getLeaderboard = async (req, res, next) => {
     try {
-        // Fetch the total expenses for each user with their name
-        const leaderboard = await Expense.findAll({
-            attributes: [
-                'userId',
-                [Sequelize.fn('SUM', Sequelize.col('amount')), 'totalExpenses']
-            ],
-            group: ['userId'],
-            order: [[Sequelize.literal('totalExpenses'), 'DESC']],
-            limit: 5,
-            include: [
-                {
-                    model: User,
-                    attributes: ['name'],
-                    required: true,
-                    as: 'user' 
-                }
-            ]
+        
+        const leaderboard = await User.findAll({
+            attributes: ['name', 'totalExpense'],
+            order: [['totalExpense', 'DESC']],
+            limit: 5
         });
 
-        // Map the result to include user details and their total expenses
-        const result = leaderboard.map(entry => ({
-            userName: entry.user.name, 
-            totalExpenses: entry.get('totalExpenses')
+        const result = leaderboard.map(user => ({
+            userName: user.name,
+            totalExpenses: user.totalExpense
         }));
+       
 
         res.status(200).json({
             success: true,
-            leaderboard: result
+            leaderboard: result,
+            user:req.user.name
         });
     } catch (error) {
         console.error('Error fetching leaderboard:', error);

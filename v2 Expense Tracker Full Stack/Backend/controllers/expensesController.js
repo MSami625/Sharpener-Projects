@@ -22,32 +22,49 @@ exports.getAllExpenses = (req, res, next) => {
     });
 };
 
-exports.createExpense = (req, res, next) => {
+exports.createExpense =async  (req, res, next) => {
   const { amount, description, category,token } = req.body;
 
   const verifyResult = jwt.verify(token, secret);
   const userId = verifyResult.userId;
 
-  User.findByPk(userId)
-    .then((user) => {
-      return user.createExpense({
+  try {
+   
+    const user = await User.findByPk(userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await user.createExpense({
+      amount: amount,
+      description: description,
+      category: category,
+    });
+
+  
+    const totalExpense = parseFloat(user.totalExpense) || 0;
+    const newAmount = parseFloat(amount);
+
+    user.totalExpense = totalExpense + newAmount;
+    await user.save();
+
+    // Step 4: Respond with a success message
+    res.status(201).json({
+      message: "Expense created and totalExpense updated successfully",
+      expense: {
         amount: amount,
         description: description,
         category: category,
-      });
-    })
-    .then((result) => {
-      res.status(201).json({
-        message: "Expense created successfully",
-        expense: result,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({
-        message: "Something went wrong",
-      });
+      },
+      totalExpense: user.totalExpense,
     });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: "Something went wrong",
+    });
+  }
 
 };
 

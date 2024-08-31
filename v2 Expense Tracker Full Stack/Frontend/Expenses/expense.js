@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", fetchExpenses);
 
 const premiumBtn = document.getElementById("rzp-button1");
 const leaderboardBtn = document.getElementById("show-leaderboard");
+const leaderboardContainer=document.querySelector("#leaderboard-container");
 
 
 const auth = localStorage.getItem("auth");
@@ -11,7 +12,8 @@ if (auth) {
   const isPremiumUser = decoded.isPremiumUser;
   if (isPremiumUser === true) {
   premiumBtn.outerHTML = `<button id="premiumBtn" class="premium-badge" disabled>You're a Premium User</button>`
-  leaderboardBtn.style.display = "block";
+  leaderboardBtn.outerHTML = ` <button id="show-leaderboard"  onclick="showLeaderboard()">Show Leaderboard</button>`;
+  leaderboardContainer.style.display = 'block';
 }
 }
 
@@ -38,6 +40,12 @@ async function handleFormSubmit(event) {
     } else {
       await axios.post("http://localhost:4000/expenses", obj);
       setTimeout(fetchExpenses, 100);
+      
+      //clean up the form
+      path.amount.value = "";
+      path.description.value = "";
+      path.category.value = "";
+
       setTimeout(showLeaderboard,500);
     }
   } catch (error) {
@@ -176,20 +184,25 @@ async function handlePayment(e) {
 let isLeaderboardVisible = false;
 
 async function showLeaderboard() {
-  const response= await axios.get("http://localhost:4000/premium/leaderboard");
+  const response= await axios.get("http://localhost:4000/premium/leaderboard",{
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('auth')}`
+    } 
+  });
  
   const leaderboard = response.data.leaderboard;
   const tableBody = document.getElementById('leaderboard-body');
     
   tableBody.innerHTML = ''; // Clear any existing rows
-
+  console.log(response.data);
   leaderboard.forEach((entry, index) => {
     const row = document.createElement('tr');
     row.innerHTML = `
       <td>${index + 1}</td>
-      <td>${index==0?"🥇":" "}${entry.userName}</td>
+      <td>${index==0?"🥇":" "}${entry.userName==response.data.user?'<b>You ('+entry.userName+')</b>':entry.userName}</td>
       <td>₹${entry.totalExpenses}</td>
     `;
+
     tableBody.appendChild(row);
   });
    isLeaderboardVisible = !isLeaderboardVisible;
