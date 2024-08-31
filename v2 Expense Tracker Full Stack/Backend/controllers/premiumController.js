@@ -18,14 +18,14 @@ exports.getLeaderboard = async (req, res, next) => {
                     model: User,
                     attributes: ['name'],
                     required: true,
-                    as: 'user' // Ensure this alias is correct
+                    as: 'user' 
                 }
             ]
         });
 
         // Map the result to include user details and their total expenses
         const result = leaderboard.map(entry => ({
-            userName: entry.user.name, // Correct alias for user
+            userName: entry.user.name, 
             totalExpenses: entry.get('totalExpenses')
         }));
 

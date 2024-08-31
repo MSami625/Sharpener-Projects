@@ -38,6 +38,7 @@ async function handleFormSubmit(event) {
     } else {
       await axios.post("http://localhost:4000/expenses", obj);
       setTimeout(fetchExpenses, 100);
+      setTimeout(showLeaderboard,500);
     }
   } catch (error) {
     console.error("Error handling form submit:", error);
@@ -133,7 +134,7 @@ async function handlePayment(e) {
           "order_id": order_id, 
           "handler": async function (response) {
               try { 
-                  await axios.post('http://localhost:4000/user/updatePaymentStatus', {
+                 const res= await axios.post('http://localhost:4000/user/updatePaymentStatus', {
                       order_id: order_id, 
                       payment_id: response.razorpay_payment_id
                   }, {
@@ -143,6 +144,8 @@ async function handlePayment(e) {
                   });
 
                   alert('Payment Successful, You are now a premium user');
+                  localStorage.setItem('auth', res.data.token);
+                  window.location.reload();
               } catch (error) {
                   console.error('Error updating payment status:', error);
                   alert('Payment failed, please try again');
@@ -170,24 +173,27 @@ async function handlePayment(e) {
 }
 
 
+let isLeaderboardVisible = false;
 
-
-async function showLeaderBoard() {
+async function showLeaderboard() {
   const response= await axios.get("http://localhost:4000/premium/leaderboard");
  
   const leaderboard = response.data.leaderboard;
-  const tableBody = document.getElementById('leaderboard-container');
+  const tableBody = document.getElementById('leaderboard-body');
+    
   tableBody.innerHTML = ''; // Clear any existing rows
 
-  // Iterate over the leaderboard data and create table rows
   leaderboard.forEach((entry, index) => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-          <td>${index + 1}</td>
-          <td>${entry.userName}</td>
-          <td>${entry.totalExpenses}</td>
-      `;
-      tableBody.appendChild(row);
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${index + 1}</td>
+      <td>${index==0?"🥇":" "}${entry.userName}</td>
+      <td>₹${entry.totalExpenses}</td>
+    `;
+    tableBody.appendChild(row);
   });
+   isLeaderboardVisible = !isLeaderboardVisible;
+  document.getElementById('leaderboard-container').style.display = isLeaderboardVisible ? 'block' : 'none';
+
 
 }

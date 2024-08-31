@@ -1,5 +1,6 @@
 const Razorpay=require("razorpay");
 const Order = require("../models/Order");
+const jwt = require("jsonwebtoken");
 
 exports.purchasePremium = async (req, res, next) => {
     try {
@@ -8,9 +9,7 @@ exports.purchasePremium = async (req, res, next) => {
             key_secret: process.env.RAZORPAY_KEY_SECRET
         });
 
-    const result= jwt.verify(token,process.env.JWT_SECRET);
-
-        const amount = 99 * 100; // Convert INR to paise
+        const amount = 99 * 100; 
         rzp.orders.create({ amount, currency: 'INR', receipt: 'order_rcptid_11', payment_capture: '1' }, async function (error, order) {
             if (error) {
                 console.error('Razorpay error:', error);
@@ -76,11 +75,10 @@ exports.updatePaymentStatus = async (req, res) => {
 
         // Update user status to premium
         await req.user.update({ isPremiumUser: true });
+        const token=createJWT(req.user);
 
-        return res.status(200).json({
-            success: true,
-            message: 'Payment successful, You are now a premium user'
-        });
+       return res.status(201).json({"message":"Payment successful","token":token});
+
     } catch (err) {
         console.error('Error updating payment status:', err); // Log error for debugging
         return res.status(500).json({
@@ -90,3 +88,9 @@ exports.updatePaymentStatus = async (req, res) => {
     }
 };
 
+function createJWT(user) {
+    return jwt.sign(
+      { userId: user.id, isPremiumUser: user.isPremiumUser },
+      process.env.JWT_SECRET
+    );
+  }
