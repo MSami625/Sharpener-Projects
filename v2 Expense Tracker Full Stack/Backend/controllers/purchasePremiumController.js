@@ -23,7 +23,7 @@ exports.purchasePremium = async (req, res, next) => {
                 const createdOrder = await req.user.createOrder({
                     orderId: order.id,
                     status: 'pending',
-                    paymentId: null // Initialize paymentId as null
+                    paymentId: null 
                 });
 
                 return res.status(200).json({
@@ -57,7 +57,7 @@ exports.updatePaymentStatus = async (req, res) => {
     try {
         const { order_id, payment_id } = req.body;
 
-        console.log("Received order_id:", order_id); // Log the received order_id
+        console.log("Received order_id:", order_id); 
         console.log("Received payment_id:", payment_id); 
         
         // Find the order
@@ -70,7 +70,7 @@ exports.updatePaymentStatus = async (req, res) => {
             });
         }
 
-        // Update the order status and payment ID
+    
         await order.update({ paymentId: payment_id, status: 'completed' });
 
         // Update user status to premium
@@ -80,7 +80,7 @@ exports.updatePaymentStatus = async (req, res) => {
        return res.status(201).json({"message":"Payment successful","token":token});
 
     } catch (err) {
-        console.error('Error updating payment status:', err); // Log error for debugging
+        console.error('Error updating payment status:', err); 
         return res.status(500).json({
             success: false,
             message: 'Internal server error'
@@ -90,7 +90,8 @@ exports.updatePaymentStatus = async (req, res) => {
 
 function createJWT(user) {
     return jwt.sign(
-      { userId: user.id, isPremiumUser: user.isPremiumUser },
-      process.env.JWT_SECRET
+        { userId: user.id, isPremiumUser: user.isPremiumUser },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' } 
     );
-  }
+}

@@ -1,11 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const expensesController = require('../controllers/expensesController');
+const expensesController = require("../controllers/expensesController");
+const authenticate = require("../middlewares/authenticate");
 
-router.get('/user/expenses/:token', expensesController.getAllExpenses);
-router.post('/expenses', expensesController.createExpense);
+router.get("/user/expenses/", expensesController.getAllExpenses);
+router.post("/expenses", expensesController.createExpense);
 // edit
-router.delete('/user/expenses/:id', expensesController.deleteExpense);    
-
+router.delete(
+  "/user/expenses/:id",
+  authenticate,
+  expensesController.deleteExpense
+);
 
 module.exports = router;
