@@ -1,94 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expense Tracker</title>
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="expense.css" rel="stylesheet" />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Expense Tracker</title>
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-  <link href="expense.css" rel="stylesheet">
-</head>
-
-<body>
-
- 
+  <body>
     <header>
-      <button id="rzp-button1" onclick="handlePayment(event)">Buy Premium</button>
+      <button id="rzp-button1" onclick="handlePayment(event)">
+        Buy Premium
+      </button>
       <a id="login-button" onclick="handleLogOut()">Login</a>
     </header>
 
-  <div class="container">
-    <div class="row">
-      <div class="form-container">
-        <h1>Expense Tracker</h1>
-        <form onsubmit="handleFormSubmit(event)" id="expense-form">
-          <div class="form-group">
-            <label for="amount">Enter Expense Amount(₹):</label>
-            <input type="number" class="form-control" id="amount" name="amount" required>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <div id="list-head">
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-toggle="modal"
+              data-target="#expenseModal"
+            >
+              Add Expense
+            </button>
+            <h2 >Expenses</h2>
+            <div id="time-container">
+              <select name="time" id="time">
+                  <option value="all">All Time</option>
+                  <option value="today">Today</option>
+                  <option value="week">This Week</option>
+                  <option value="month">This Month</option>
+              </select>
           </div>
-          <div class="form-group">
-            <label for="description">Enter Description:</label>
-            <input type="text" class="form-control" id="description" name="description" required>
+          
           </div>
-          <div class="form-group">
-            <label for="category">Choose a Category:</label>
-            <select class="form-control" id="category" name="category" required>
-              <option value="food">Food</option>
-              <option value="transport">Transport</option>
-              <option value="clothes">Clothes</option>
-              <option value="bills">Bills</option>
-              <option value="others">Others</option>
-            </select>
+          <div class="expenses-container">
+            <table class="expenses-table table table-striped">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Description</th>
+                  <th>Category</th>
+                  <th>Income</th>
+                  <th>Amount</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="list-group">
+                <!-- Expense rows will be inserted here -->
+              </tbody>
+            </table>
           </div>
-          <button type="submit" class="btn btn-primary">Add Expense</button>
-        </form>
+        </div>
       </div>
 
-      <div class="expenses-container">
-        <h2>Expenses</h2>
-        <table class="expenses-table">
-          <thead>
-            <tr>
-              <th>Description</th>
-              <th>Category</th>
-              <th>Amount</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="list-group">
-         
-          </tbody>
-        </table>
+      <div class="row">
+        <div class="col">
+          <button
+            id="show-leaderboard"
+            style="display: none"
+            onclick="showLeaderboard()"
+          >
+            Show Leaderboard
+          </button>
+          <div id="leaderboard-container" style="display: none">
+            <table id="leaderboard-table" class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>User</th>
+                  <th>Total Expenses</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboard-body">
+                <!-- Leaderboard rows will be inserted here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
 
-   
-      <button id="show-leaderboard" style="display: none;" onclick="showLeaderboard()">Show Leaderboard</button>
-      <div id="leaderboard-container" style="display: none;" >
-        <table id="leaderboard-table" class="table">
-          <thead>
-            <tr>
-              <th>Rank</th>
-              <th>User</th>
-              <th>Total Expenses</th>
-            </tr>
-          </thead>
-          <tbody id="leaderboard-body">
-            <!-- Leaderboard rows will be inserted here -->
-          </tbody>
-        </table>
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="expenseModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="expenseModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="expenseModalLabel">Add Expense</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form onsubmit="handleFormSubmit(event)" id="expense-form">
+              <div class="form-group">
+                <label for="amount">Enter Expense Amount (₹):</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="amount"
+                  name="amount"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="incomeAmount">Enter Income Amount (₹):</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="incomeAmount"
+                  name="incomeAmount"
+                />
+              </div>
+              <div class="form-group">
+                <label for="description">Enter Description:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="description"
+                  name="description"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="category">Choose a Category:</label>
+                <select
+                  class="form-control"
+                  id="category"
+                  name="category"
+                  required
+                >
+                  <option value="food">Food</option>
+                  <option value="transport">Transport</option>
+                  <option value="clothes">Clothes</option>
+                  <option value="bills">Bills</option>
+                  <option value="others">Others</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary">Add Expense</button>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
-  
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script src="expense.js"></script>
-</body>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="expense.js"></script>
+  </body>
 </html>

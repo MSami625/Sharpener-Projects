@@ -1,3 +1,4 @@
+/* Base Styles */
 body {
     background-color: #f4f7f6;
     color: #333;
@@ -18,7 +19,6 @@ header {
 }
 
 header button, header a {
-    background-color: #0056b3;
     color: white;
     border: none;
     border-radius: 8px;
@@ -71,96 +71,37 @@ header #login-button:hover {
     background-color: #0056b3;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    header {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 16px;
-    }
-
-    header button, header a {
-        width: 100px;
-        margin-left: 0;
-        margin-bottom: 10px;
-        text-align: center;
-        padding: 5px;
-    }
-    #premiumBtn
-    {
-        font-size: 10px;
-        padding: 5px;
-    }
-    #login-button{
-        padding: 5px 0px !important;
-        width: 60px;
-        font-size: 10px !important;
-        top: 25px !important;
-    }
-
-    header button:last-of-type, header a:last-of-type {
-        margin-bottom: 0;
-    }
+/* Modal Styles */
+.modal-header {
+    background-color: #f8f9fa;
 }
 
-@media (max-width: 480px) {
-    body{
-        padding: 20px;
-    }
-
+.modal-title {
+    font-size: 1.5rem;
 }
 
-
-.row {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 20px;
+.close {
+    font-size: 1.5rem;
+    opacity: 0.5;
 }
 
-.form-container {
-    background-color: #ffffff;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+.close:hover {
+    opacity: 1;
 }
 
-.form-container h1 {
-    color: #004085;
-    font-size: 1.75rem; /* Reduced font size */
-    margin-bottom: 20px;
+.modal-body {
+    padding: 2rem;
 }
 
-.form-container .btn-primary {
-    background-color: #0056b3;
-    border: none;
-    border-radius: 0.5rem;
-    padding: 8px 16px; /* Reduced padding */
-    font-size: 0.875rem; /* Reduced font size */
+.modal-content {
+    border-radius: 0.3rem;
 }
 
-.form-container .btn-primary:hover {
-    background-color: #003d80;
-    box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.2);
-}
-
-.expenses-container {
-    background-color: #ffffff;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 15px; /* Reduced padding */
-    max-height: 400px;
-    overflow-y: auto; /* Use auto for overflow */
-}
-
-.expenses-container h2 {
-    color: #004085;
-    font-size: 1.5rem; /* Reduced font size */
-    margin-bottom: 15px;
-}
-
+/* Table Styles */
 .expenses-table {
     width: 100%;
     border-collapse: collapse;
+    border: 2px solid #007bff;
 }
 
 .expenses-table thead {
@@ -169,7 +110,7 @@ header #login-button:hover {
 }
 
 .expenses-table th, .expenses-table td {
-    padding: 8px; /* Reduced padding */
+    padding: 12px;
     text-align: left;
     border-bottom: 1px solid #ddd;
 }
@@ -182,6 +123,90 @@ header #login-button:hover {
     background-color: #f1f1f1;
 }
 
+#list-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    gap: 5px;
+}
+
+.modal{
+    top: 20px;
+}
+
+/* Form Container */
+.form-container {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 20px; /* Add some space at the top */
+}
+
+.form-container h1 {
+    color: #004085;
+    font-size: 1.75rem;
+    margin-bottom: 20px;
+}
+
+.form-container .btn-primary {
+    background-color: #0056b3;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 8px 16px;
+    font-size: 0.875rem;
+}
+
+.form-container .btn-primary:hover {
+    background-color: #003d80;
+    box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.2);
+}
+
+/* Expenses Container */
+.expenses-container {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 5px;
+    width: 100%; /* Full width of the parent container */
+    max-height: 400px; /* Increased height for better visibility */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    margin-bottom: 30px;
+}
+
+/* Scrollbar styling */
+.expenses-container::-webkit-scrollbar {
+    width: 12px; /* Scrollbar width */
+}
+
+.expenses-container::-webkit-scrollbar-thumb {
+    background-color: #007bff;
+    border-radius: 10px;
+}
+
+.expenses-container::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+}
+
+.expenses-container h2 {
+    color: #004085;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.expenses-container ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.expenses-container li {
+    font-size: 1rem; /* Adjust as needed */
+    margin-bottom: 10px;
+}
+
+/* Buttons */
 .btn-action {
     border: none;
     border-radius: 0.5rem;
@@ -221,79 +246,6 @@ header #login-button:hover {
     transition: all 0.3s ease;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
-/* Base styles for table and buttons */
-.expenses-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.expenses-table th, .expenses-table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-.expenses-table tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-.expenses-table tbody tr:hover {
-    background-color: #f1f1f1;
-}
-
-.btn-action {
-    border: none;
-    border-radius: 0.5rem;
-    padding: 5px 10px;
-    color: #fff;
-    cursor: pointer;
-    font-size: 0.875rem;
-    transition: background-color 0.3s ease;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .expenses-table th, .expenses-table td {
-        padding: 8px; /* Reduced padding for smaller screens */
-        font-size: 0.875rem; /* Slightly smaller font size */
-    }
-
-    .expenses-container {
-        padding: 10px; /* Reduced padding */
-        max-height: 250px; /* Adjust height to fit smaller screens */
-        overflow-y: auto; /* Enable scrolling if necessary */
-    }
-
-    .btn-action {
-        font-size: 0.75rem; /* Smaller button font size */
-        padding: 4px 8px; /* Smaller button padding */
-    }
-
-    .form-container {
-        padding: 15px; /* Reduced padding in the form */
-    }
-
-    .form-container .btn-primary {
-        padding: 8px 16px; /* Smaller button padding in the form */
-        font-size: 0.875rem; /* Slightly smaller font size */
-    }
-
-    #rzp-button1 {
-        font-size: 14px; /* Smaller font size for the button */
-        padding: 10px 20px; /* Adjust padding */
-    }
-
-    /* Responsive adjustments for leaderboard */
-    #show-leaderboard {
-        margin-bottom: 15px; /* Adjust margin */
-        font-size: 0.875rem; /* Smaller font size */
-        padding: 8px 16px; /* Smaller button padding */
-    }
-}
-
-label{
-   margin: 0;
-}
 
 #rzp-button1:hover {
     background: linear-gradient(135deg, #ff6f61 0%, #ff3f3f 100%);
@@ -310,6 +262,55 @@ label{
     box-shadow: 0 0 0 3px rgba(255, 105, 97, 0.5);
 }
 
+/* Custom Select Styles */
+#time {
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    padding: 10px 15px;
+    font-size: 1rem;
+    color: #333;
+    cursor: pointer;
+    appearance: none; /* Remove default arrow */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease;
+    width: 100%;
+    max-width: 250px; /* Adjust width as needed */
+}
+
+#time:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+/* Custom arrow styling */
+#time-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    max-width: 250px; /* Match width with select */
+}
+
+#time-container::after {
+    content: '▼'; /* Custom arrow */
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #007bff;
+    font-size: 0.75rem;
+}
+
+/* Styling for options */
+#time option {
+    background-color: #ffffff;
+    color: #333;
+}
+
+
+/* Premium Badge */
 .premium-badge {
     position: relative;
     background-color: #4CAF50;
@@ -370,6 +371,7 @@ label{
     animation: glitter 1s infinite linear;
 }
 
+/* Login Button */
 #login-button {
     position: absolute;
     top: 10px;
@@ -384,20 +386,49 @@ label{
     transition: background-color 0.3s ease;
 }
 
-.login-button:hover {
+#login-button:hover {
     background-color: #0056b3;
 }
 
-@media (max-width: 768px) {
-    .row {
-        grid-template-columns: 1fr;
-    }
+/* Show Leaderboard Button */
 
-    .login-button {
-        position: static;
-        display: block;
-        margin: 10px auto;
-    }
+/* Leaderboard Table Header */
+#leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 2px solid #007bff; /* Adjust if necessary */
+}
+
+#leaderboard-table thead {
+    background-color: #007bff; /* Table header background color */
+    color: #fff; /* Table header text color */
+}
+
+#leaderboard-table th {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd; /* Border for table header cells */
+    font-size: 1rem; /* Adjust font size as needed */
+}
+
+#leaderboard-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9; /* Zebra striping for table rows */
+}
+
+#leaderboard-table tbody tr:hover {
+    background-color: #f1f1f1; /* Hover color for table rows */
+}
+
+/* Apply styles to leaderboard container if needed */
+.leaderboard-container {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    width: 100%;
+    max-height: 500px; /* Adjust height if needed */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    margin-bottom: 30px;
 }
 
 #show-leaderboard {
@@ -407,91 +438,80 @@ label{
     border-radius: 0.5rem;
     padding: 10px 20px;
     font-size: 1rem;
-    margin-top: 20px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    display: inline-block;
+    margin-bottom: 10px;
 }
 
-.leaderboard-container {
-    margin-top: 20px;
-    padding: 20px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-   
+#show-leaderboard:hover {
+    background-color: #0056b3;
 }
 
-/* Button styling */
-#show-leaderboard {
-    margin-bottom: 20px;
-}
-
-/* Table styling */
-.table {
-    width: 100%;
-    margin-bottom: 1rem;
-    color: #212529;
-    border-collapse: collapse;
-}
-
-.table thead th {
-    background-color: #007bff;
-    color: #fff;
-    text-align: center;
-    padding: 12px;
-    font-size: 1.1rem;
-}
-
-.table tbody td {
-    text-align: center;
-    padding: 10px; /* Adjusted padding for better spacing */
-    font-size: 1rem;
-}
-
-.table tbody tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-.table tbody tr:hover {
-    background-color: #e9ecef;
-}
-
-.table th,
-.table td {
-    border: 1px solid #dee2e6;
-    vertical-align: top;
-}
-
-/* Responsive styling */
-@media (max-width: 768px) {
-    .table thead th,
-    .table tbody td {
-        font-size: 0.9rem;
-        padding: 8px; /* Reduced padding for smaller screens */
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .modal-content {
+        width: 90%;
+        max-width: 700px;
     }
 }
 
 
-/* WebKit-based browsers (Chrome, Safari) */
-::-webkit-scrollbar {
-    width: 12px; /* Width of the scrollbar */
+
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    header button, header a {
+        margin-left: 0;
+        margin-bottom: 10px;
+    }
+
+    .modal-body {
+        padding: 1rem;
+    }
+
+    .expenses-container {
+        max-height: none; /* Allow full height for smaller devices */
+    }
 }
 
-::-webkit-scrollbar-track {
-    background: #f1f1f1; /* Background of the scrollbar track */
-    border-radius: 10px; /* Rounded corners for the track */
+@media (max-width: 576px) {
+    .form-container, .expenses-container {
+        width: 100%;
+        box-shadow: none;
+    }
+
+    .modal-content {
+        width: 100%;
+        border-radius: 0;
+    }
+
+    .premium-badge {
+        font-size: 10px;
+        padding: 10px;
+    }
+
+    #login-button {
+        font-size: 12px;
+        padding: 10px;
+    }
+
+    .btn {
+        font-size: 12px;
+        padding: 5px;
+    }
+
+  
+  
+
+    #list-head h2 {
+        font-size: 1rem;
+    }
+
+    #time {
+        font-size: 0.8rem;
+    }
 }
-
-::-webkit-scrollbar-thumb {
-    background: #007bff; /* Color of the draggable part of the scrollbar */
-    border-radius: 10px; /* Rounded corners for the thumb */
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Shadow effect */
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #0056b3; /* Color of the thumb on hover */
-}
-
-
-

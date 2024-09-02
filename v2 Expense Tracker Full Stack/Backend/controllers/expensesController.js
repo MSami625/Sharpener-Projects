@@ -65,10 +65,15 @@ exports.createExpense = async (req, res, next) => {
     const newAmount = parseFloat(amount);
 
     user.totalExpense = totalExpense + newAmount;
-    await user.save({ transaction: t });
-
-    await t.commit();
-
+    const result=await user.save({ transaction: t });
+ 
+     if (!result) {
+      await t.rollback();
+      return res.status(400).json({ message: "Error in updating totalExpense" });
+     }
+     
+     await t.commit();
+ 
     const isPremiumUser = user.isPremiumUser;
 
     res.status(201).json({
@@ -78,8 +83,7 @@ exports.createExpense = async (req, res, next) => {
       isPremiumUser,
     });
   } catch (err) {
-    console.error(err);
-    await t.rollback();
+    console.error(err); 
     res.status(500).json({
       message: "Something went wrong",
     });

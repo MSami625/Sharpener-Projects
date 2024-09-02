@@ -86,8 +86,10 @@ async function fetchExpenses() {
       expenses.forEach((expense) => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
+          <td>${expense.createdAt}</td>
           <td>${expense.description}</td>
           <td>${expense.category}</td>
+          <td>${expense.amount}</td>
           <td>${expense.amount}</td>
           <td>
             <button class="btn-action edit-btn">Edit</button>
