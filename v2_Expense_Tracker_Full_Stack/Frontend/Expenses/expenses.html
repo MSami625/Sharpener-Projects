@@ -32,33 +32,74 @@
             >
               Add Expense
             </button>
-            <h2 >Expenses</h2>
+            <h2>Expenses</h2>
             <div id="time-container">
-              <select name="time" id="time">
-                  <option value="all">All Time</option>
-                  <option value="today">Today</option>
-                  <option value="week">This Week</option>
-                  <option value="month">This Month</option>
+              <select onchange="handleTime()" name="time" id="time">
+                <option value="all">All Time</option>
+                <option value="today">Today</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
               </select>
+            </div>
           </div>
-          
-          </div>
-          <div class="expenses-container">
-            <table class="expenses-table table table-striped">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Description</th>
-                  <th>Category</th>
-                  <th>Income</th>
-                  <th>Amount</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="list-group">
-                <!-- Expense rows will be inserted here -->
-              </tbody>
-            </table>
+          <div class="expenses-outer">
+            <div class="expenses-container">
+              <table class="expenses-table table table-striped">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Income</th>
+                    <th>Amount</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="list-group">
+                  <!-- Expense rows will be inserted here -->
+                </tbody>
+              </table>
+            </div>
+            <div class="downloaddiv">
+              <button onclick="handleDownload()" id="download">
+                Download All Expenses
+              </button>
+              <button id="downloadhistory">
+                History
+              </button>
+            </div>
+            <!-- Modal HTML Structure -->
+            <div
+              class="modal fade"
+              id="historyModal"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="historyModalLabel"
+              aria-hidden="true"
+            > 
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="historyModalLabel">
+                      Download History
+                    </h5>
+                    <button
+                      type="button"
+                      class="close"
+                      data-dismiss="modal"
+                      aria-label="Close"
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <ul id="history-list" class="list-group">
+                      <!-- History items will be inserted here -->
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

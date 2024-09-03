@@ -11,6 +11,7 @@ const Order = require("./models/Order");
 const paymentRoute = require("./routes/purchasePremiumRoute");
 const premiumRoute = require("./routes/premiumRoute");
 const forgotPwRoute = require("./routes/forgotPwRoute");
+const filesUploaded = require("./models/filesUploaded");
 
 
 
@@ -24,6 +25,8 @@ User.hasMany(Expense);
 Expense.belongsTo(User,{ constraints: true, onDelete: "CASCADE" });
 User.hasMany(Order);
 Order.belongsTo(User,{ constraints: true, onDelete: "CASCADE" }); 
+User.hasMany(filesUploaded);
+filesUploaded.belongsTo(User,{ constraints: true, onDelete: "CASCADE" });
 
 
 app.use('/',authRoute);
@@ -36,8 +39,8 @@ app.use('/',forgotPwRoute);
 
 
 sequelize
-  // .sync({ alter: true })
-  .sync()
+  .sync({ alter: true })
+  // .sync()
   .then((result) => {
     console.log(result);
   })

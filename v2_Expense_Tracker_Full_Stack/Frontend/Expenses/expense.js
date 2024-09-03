@@ -3,6 +3,8 @@ document.addEventListener("DOMContentLoaded", fetchExpenses);
 const premiumBtn = document.getElementById("rzp-button1");
 const leaderboardBtn = document.getElementById("show-leaderboard");
 const leaderboardContainer = document.querySelector("#leaderboard-container");
+const downloadBtn = document.getElementById("download");
+const downloadHistoryButton = document.getElementById("downloadhistory");
 
 const auth = localStorage.getItem("auth");
 
@@ -13,6 +15,8 @@ if (auth) {
     premiumBtn.outerHTML = `<button id="premiumBtn" class="premium-badge" disabled>You're a Premium User</button>`;
     leaderboardBtn.outerHTML = ` <button id="show-leaderboard" onclick="showLeaderboard()">Show Leaderboard</button>`;
     leaderboardContainer.style.display = "block";
+    downloadBtn.style.display = "block";
+    downloadHistoryButton.style.display = "block";
   }
 } else {
   window.location.href = "../login.html";
@@ -72,7 +76,7 @@ async function fetchExpenses() {
       return;
     }
 
-    const res = await axios.get('http://localhost:4000/user/expenses/', {
+    const res = await axios.get("http://localhost:4000/user/expenses/", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -262,3 +266,161 @@ async function showLeaderboard() {
     console.error("Error fetching leaderboard:", error);
   }
 }
+
+async function handleTime() {
+  const selectElement = document.getElementById("time");
+
+  const token = localStorage.getItem("auth");
+  if (!token) {
+    window.location.href = "../login.html";
+  }
+  const response = await axios.get(
+    `http://localhost:4000/user/expenses/${selectElement.value}`,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("auth")}`,
+      },
+    }
+  );
+  const expenses = response.data.expenses;
+  const expenseList = document.getElementById("list-group");
+  expenseList.innerHTML = "";
+  if (expenses.length != 0) {
+    expenses.forEach((expense) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+          <td>${expense.createdAt}</td>
+          <td>${expense.description}</td>
+          <td>${expense.category}</td>
+          <td>${expense.amount}</td>
+          <td>${expense.amount}</td>
+          <td>
+            <button class="btn-action edit-btn">Edit</button>
+            <button class="btn-action
+}
+  del-btn">Delete</button>
+          </td>
+        `;
+
+      const delbtn = tr.querySelector(".del-btn");
+      delbtn.addEventListener("click", async () => {
+        try {
+          const res = await axios.delete(
+            `http://localhost:4000/user/expenses/${expense.id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("auth")}`,
+              },
+            }
+          );
+
+          await fetchExpenses();
+        } catch (error) {
+          alert("Error deleting expense, Login again or try again:", error);
+          window.location.href = "../login.html";
+        }
+      });
+
+      // const editbtn = tr.querySelector(".edit-btn");
+      // editbtn.addEventListener("click", () => {
+      //   document.getElementById("amount").value = expense.amount;
+      //   document.getElementById("description").value = expense.description;
+      //   document.getElementById("category").value = expense.category;
+      //   c_id = expense.id;
+      // });
+
+      expenseList.appendChild(tr);
+    });
+  }
+}
+
+async function handleDownload() {
+  try {
+    const token = localStorage.getItem("auth");
+    if (!token) {
+      window.location.href = "../login.html";
+    }
+    const response = await axios.get(
+      `http://localhost:4000/premium/expenses/download`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth")}`,
+        },
+      }
+    );
+
+    if (response.data.success) {
+      window.open(response.data.fileUrl);
+    } else {
+      alert(response.data.message);
+    }
+  } catch (err) {
+    alert("Error downloading expenses, Please try again", err.message);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const downloadHistoryButton = document.getElementById("downloadhistory");
+  const historyModal = document.getElementById("historyModal");
+  const closeButton = document.querySelector("#historyModal .close");
+  const historyList = document.getElementById("history-list");
+
+ 
+  async function fetchAndShowHistory() {
+    try {
+   
+      $(historyModal).modal("show");
+
+    // Fetch history data from the server
+      const response = await axios.get("http://localhost:4000/premium/expenses/downhistory",{
+        headers: {  
+          Authorization: `Bearer ${localStorage.getItem("auth")}`,
+        },
+      }); 
+
+      historyList.innerHTML = "";
+
+     
+      if (response) {
+        response.data.files.forEach((item) => {
+          const listItem = document.createElement('li');
+
+          listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+          
+          const truncatedUrl = item.url.length > 50 ? item.url.substring(51, item.url.length / 2.1) + '...' : item.url;
+          
+          listItem.innerHTML = `
+        
+            <b">${item.id}. ${truncatedUrl}</b> |
+            <a href="${item.url}" download class="btn btn-primary btn-sm">Download</a>
+          `;
+          
+          historyList.appendChild(listItem);
+        });
+
+      } else {
+        historyList.innerHTML =
+          '<li class="list-group-item">No history available.</li>';
+      }
+    } catch (error) {
+      console.error("Error fetching history:", error);
+      historyList.innerHTML =
+        '<li class="list-group-item">Error fetching history.</li>';
+    }
+  }
+
+  
+  downloadHistoryButton.addEventListener("click", fetchAndShowHistory);
+
+ 
+  closeButton.addEventListener("click", () => {
+    $(historyModal).modal("hide");
+  });
+
+  
+  window.addEventListener("click", (event) => {
+    if (event.target === historyModal) {
+      $(historyModal).modal("hide");
+    }
+  });
+});

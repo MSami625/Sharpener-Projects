@@ -76,6 +76,7 @@ header #login-button:hover {
     background-color: #f8f9fa;
 }
 
+
 .modal-title {
     font-size: 1.5rem;
 }
@@ -97,6 +98,55 @@ header #login-button:hover {
     border-radius: 0.3rem;
 }
 
+
+.modal-content {
+    border-radius: 0.3rem;
+}
+
+.modal-header {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.modal-body .list-group-item {
+    font-size: 1rem;
+}
+
+/* Header Button */
+#downloadhistory {
+    background-color: #ff6f61;
+    color: white;
+    border: none;
+    border-radius: 0.5rem; /* Rounded corners */
+    padding: 5px 15px; /* Padding inside the button */
+    font-size: 0.8rem; /* Font size */
+    font-weight: bold; /* Bold text */
+    text-transform: uppercase; /* Uppercase text */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transitions */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
+    display: none;
+    transition: background-color 0.3s ease;
+}
+
+.downloaddiv{
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+}
+
+#downloadhistory:hover {
+    background-color: #e65c50;
+}
 /* Table Styles */
 .expenses-table {
     width: 100%;
@@ -162,6 +212,15 @@ header #login-button:hover {
     background-color: #003d80;
     box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.2);
 }
+ .expenses-outer{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5  px;
+    gap: 5px;
+    margin-bottom: 40px;
+ }
 
 /* Expenses Container */
 .expenses-container {
@@ -172,8 +231,45 @@ header #login-button:hover {
     width: 100%; /* Full width of the parent container */
     max-height: 400px; /* Increased height for better visibility */
     overflow-x: auto; /* Enable horizontal scrolling */
-    margin-bottom: 30px;
+    margin-bottom: 5px;
+    display: flex;
+    
 }
+
+/* Download Button Styles */
+#download  {
+    background-color: #28a745; /* Green background color */
+    color: white; /* White text color */
+    border: none; /* Remove default border */
+    border-radius: 0.5rem; /* Rounded corners */
+    padding: 5px 15px; /* Padding inside the button */
+    font-size: 0.8rem; /* Font size */
+    font-weight: bold; /* Bold text */
+    text-transform: uppercase; /* Uppercase text */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transitions */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
+    display: none;
+}
+
+
+
+#download:hover {
+    background-color: #218838; /* Darker green on hover */
+    transform: translateY(-2px); /* Slight lift on hover */
+}
+
+#download:active {
+    background-color: #1e7e34; /* Even darker green on click */
+    transform: translateY(1px); /* Slight drop on click */
+}
+
+#download:focus {
+    outline: none; /* Remove default focus outline */
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.5); /* Shadow effect on focus */
+}
+
+
 
 /* Scrollbar styling */
 .expenses-container::-webkit-scrollbar {
@@ -270,6 +366,7 @@ header #login-button:hover {
     padding: 10px 15px;
     font-size: 1rem;
     color: #333;
+    display: none;
     cursor: pointer;
     appearance: none; /* Remove default arrow */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -292,21 +389,11 @@ header #login-button:hover {
     max-width: 250px; /* Match width with select */
 }
 
-#time-container::after {
-    content: '▼'; /* Custom arrow */
-    position: absolute;
-    top: 50%;
-    right: 15px;
-    transform: translateY(-50%);
-    pointer-events: none;
-    color: #007bff;
-    font-size: 0.75rem;
-}
 
 /* Styling for options */
 #time option {
     background-color: #ffffff;
-    color: #333;
+    color: #131212;
 }
 
 

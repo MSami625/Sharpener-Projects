@@ -5,5 +5,7 @@ const purchasePremiumController = require('../controllers/premiumController');
 const authenticate = require("../middlewares/authenticate");
 
 router.get('/premium/leaderboard',authenticate, purchasePremiumController.getLeaderboard);
+router.get('/premium/expenses/download',authenticate, purchasePremiumController.downloadExpenses);
+router.get('/premium/expenses/downhistory',authenticate, purchasePremiumController.downloadHistory);
 
 module.exports = router;
