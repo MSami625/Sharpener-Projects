@@ -8,12 +8,13 @@ const Order = require("../models/Order");
 exports.getAllExpenses = async (req, res, next) => {
   try {
 
-    const ITEMS_PER_PAGE = 10;  
+    const ITEMS_PER_PAGE = parseInt(req.params.rows);  
      
     const page =parseInt(req.params.condition) || 1;
-    console.log('page:', page);
+
    
     const token = req.headers.authorization ? req.headers.authorization.split(" ")[1] : null;
+
     if (!token) {
       return res.status(401).json({ message: "Token not found" });
     }

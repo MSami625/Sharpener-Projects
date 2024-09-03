@@ -1,7 +1,7 @@
 require('dotenv').config();
+const fs = require('fs');
 const express = require("express");
 const sequelize = require("./util/database");
-const bodyParser = require("body-parser");
 const cors = require("cors");
 const authRoute = require("./routes/authRoute");
 const expensesRoute = require("./routes/expensesRoute");
@@ -12,11 +12,16 @@ const paymentRoute = require("./routes/purchasePremiumRoute");
 const premiumRoute = require("./routes/premiumRoute");
 const forgotPwRoute = require("./routes/forgotPwRoute");
 const filesUploaded = require("./models/filesUploaded");
+const path = require('path');
+const helmet = require('helmet');
+const morgan = require('morgan');
 
-
+  const acessLogStream = fs.createWriteStream( path.join(__dirname, 'access.log'), {flags: 'a'} );
 
 const app = express();
 app.use(cors());
+app.use(helmet());
+app.use(morgan('combined',{stream:acessLogStream}))
 app.use(express.json());
 
 
@@ -47,6 +52,6 @@ sequelize
   .catch((err) => {
     console.log(err);
   });
-app.listen(4000, () => {
+app.listen( process.env.PORT || 4000, () => {
   console.log("Server is running on port 4000");
 });

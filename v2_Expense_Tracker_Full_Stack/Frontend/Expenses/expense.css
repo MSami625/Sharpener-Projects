@@ -177,6 +177,12 @@ header {
     margin-top: 20px;
 }
 
+.pagination-btns{
+    height: 50px;
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
 .expenses-table {
     color: #e0e0e0;
 }
@@ -452,5 +458,9 @@ header {
     margin: 0 auto;
     justify-content: space-between;
     margin-top: 20px;
+}
+
+#pages-size{
+    font-size: 13px;
 }
 }

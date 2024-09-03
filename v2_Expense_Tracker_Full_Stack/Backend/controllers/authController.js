@@ -23,8 +23,7 @@ exports.signUp = (req, res, next) => {
       }
     })
     .catch((err) => {
-      res.status(500).json({ message: "Internal Server Error" });
-      console.log(err);
+      res.status(500).json({ message: "Something went wrong, Try Again with Credentials" });
     });
 };
 
@@ -48,8 +47,7 @@ exports.login = (req, res) => {
       res.status(200).json({ message: "User logged in successfully", token });
     })
     .catch((err) => {
-      res.status(500).json({ message: "Internal Server Error" });
-      console.log(err);
+      res.status(500).json({ message: "Something went wrong, Try Again with Credentials" });
     });
 };
 

@@ -39,13 +39,13 @@
   </header>
 
 
-  <div class="container mt-4">
+  <div  class="container  mt-4">
     <div class="row">
       <div class="col">
         <div id="list-head" class="d-flex justify-content-between align-items-center mb-4">
           <button type="button" class="btn btn-primary addexp" data-toggle="modal" data-target="#expenseModal">Add Expense</button>
           <h2>Expenses</h2>
-          <div id="time-container">
+          <div style="display: none;" id="time-container">
             <select onchange="handleTime()" name="time" id="time" class="form-control">
               <option value="all">All Time</option>
               <option value="today">Today</option>
@@ -63,7 +63,7 @@
                   <th>Date</th>
                   <th>Description</th>
                   <th>Category</th>
-                  <th>Income</th>
+                  <!-- <th>Income</th> -->
                   <th>Amount</th>
                   <th>Actions</th>
                 </tr>
@@ -81,11 +81,12 @@
             
           </div>
          <div class="pagination-inner">
+          <div class="pagination-btns">
           <button id="pbtn-1" class="btn btn-secondary" style="display: none;">Previous</button>
           <button id="pbtn-2" class="btn btn-secondary">1</button>
-          <button id="pbtn-3" class="btn btn-secondary">2</button> 
+          <button id="pbtn-3" class="btn btn-secondary">2</button></div>
            <div>
-             <p id="pages-size"></p>
+             <p id="pages-size">s</p>
           </div>
        </div>
         
@@ -151,10 +152,10 @@
               <label for="amount">Enter Expense Amount (₹):</label>
               <input type="number" class="form-control" id="amount" name="amount" required />
             </div>
-            <div class="form-group">
+            <!-- <div class="form-group">
               <label for="incomeAmount">Enter Income Amount (₹):</label>
               <input type="number" class="form-control" id="incomeAmount" name="incomeAmount" />
-            </div>
+            </div> -->
             <div class="form-group">
               <label for="description">Enter Description:</label>
               <input type="text" class="form-control" id="description" name="description" required />

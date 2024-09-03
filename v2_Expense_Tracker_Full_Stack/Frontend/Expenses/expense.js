@@ -6,6 +6,7 @@ const leaderboardContainer = document.querySelector("#leaderboard-container");
 const downloadBtn = document.getElementById("download");
 const downloadHistoryButton = document.getElementById("downloadhistory");
 const timeBtn = document.getElementById("time");
+const timeSelect = document.getElementById("time-container");
 
 const auth = localStorage.getItem("auth");
 
@@ -21,6 +22,7 @@ if (auth) {
     downloadBtn.style.display = "block";
     downloadHistoryButton.style.display = "block";
     timeBtn.style.display = "block";
+    timeSelect.style.display = "block"; 
   }
 } else {
   window.location.href = "../login.html";
@@ -69,6 +71,14 @@ async function handleFormSubmit(event) {
     console.error("Error handling form submit:", error);
   }
 }
+//pagination fetch for users input
+function updateRowsAndFetch() {
+  
+  localStorage.setItem('rows', document.getElementById('row').value);
+  
+
+  fetchExpenses();
+}
 
 async function fetchExpenses() {
   const expenseList = document.getElementById("list-group");
@@ -84,10 +94,13 @@ async function fetchExpenses() {
       return;
     }
 
-  
+    
+    if(localStorage.getItem("rows")==null){
+      localStorage.setItem("rows",10);
+    }
 
     const res = await axios.get(
-      `http://localhost:4000/user/expenses/1`,
+      `http://localhost:4000/user/expenses/1/${localStorage.getItem("rows")}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -95,8 +108,19 @@ async function fetchExpenses() {
       }
     );
    
-    console.log(res.data);
-    pages_size.innerHTML=`  Rows per page: <input  style="width:22px" value=${res.data.totalExpenses}></input> of ${res.data.totalExpenses}`;
+    const currentRowsValue = localStorage.getItem("rows") || res.data.totalExpenses;
+
+    pages_size.innerHTML = `
+    Rows per page: 
+    <input 
+      id="row" 
+      style="width: 25px;" 
+      value="${currentRowsValue}" 
+      onchange="updateRowsAndFetch()"
+    />
+    of ${res.data.totalExpenses}
+  `;
+
 
     if (res.data.hasNextPage==true) {
       pbtn_3.style.display = "block"; 
@@ -125,14 +149,19 @@ async function fetchExpenses() {
     if (expenses.length != 0) {
       expenses.forEach((expense) => {
         const tr = document.createElement("tr");
+        const createdAt = new Date(expense.createdAt);
+        const formattedDate = new Intl.DateTimeFormat('en-US', {
+        day: '2-digit',
+        month: 'long',  
+        year: 'numeric'
+      }).format(createdAt);
         tr.innerHTML = `
-          <td>${expense.createdAt}</td>
+          <td>${formattedDate}</td>
           <td>${expense.description}</td>
           <td>${expense.category}</td>
-          <td>${expense.amount}</td>
           <td>₹ ${expense.amount}</td>
           <td>
-            <button class="btn btn-success edit-btn">Edit</button>
+             
             <button class=" btn btn-danger del-btn">Delete</button>
           </td>
         `;
@@ -312,7 +341,7 @@ async function showLeaderboard() {
   const selectElement = document.getElementById("time");
 
  const res=await getExpensesonCondition(selectElement.value,null);
- console.log(res);
+
 
 }
 
@@ -328,9 +357,9 @@ async function getExpensesonCondition(conditionTime,conditionPage){
   }
 
   if(conditionPage==null){
-    urlpart=`premium/expenses/${conditionTime}`;
+    urlpart=`premium/expenses/${conditionTime}/${localStorage.getItem("rows")}`;
   }else if(conditionTime==null){
-    urlpart=`user/expenses/${conditionPage}`;
+    urlpart=`user/expenses/${conditionPage}/${localStorage.getItem("rows")}`;
   }
   
   const response = await axios.get(
@@ -348,17 +377,24 @@ async function getExpensesonCondition(conditionTime,conditionPage){
   if (expenses) {
     expenses.forEach((expense) => {
       const tr = document.createElement("tr");
+      
+      const createdAt = new Date(expense.createdAt);
+      const formattedDate = new Intl.DateTimeFormat('en-US', {
+        day: '2-digit',
+        month: 'long',  
+        year: 'numeric'
+      }).format(createdAt);
+
       tr.innerHTML = `
-          <td>${expense.createdAt}</td>
+        
+          <td>${formattedDate}</td>
           <td>${expense.description}</td>
           <td>${expense.category}</td>
           <td>${expense.amount}</td>
-          <td>${expense.amount}</td>
+
           <td>
-            <button class="btn-action edit-btn">Edit</button>
-            <button class="btn-action
-}
-  del-btn">Delete</button>
+          
+            <button class="btn btn-danger del-btn">Delete</button>
           </td>
         `;
 
