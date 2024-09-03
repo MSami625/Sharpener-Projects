@@ -3,6 +3,7 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const secret = process.env.JWT_SECRET;
 const sequelize = require("../util/database");
+const Order = require("../models/Order");
 
 exports.getAllExpenses = async (req, res, next) => {
   try {
@@ -21,11 +22,15 @@ exports.getAllExpenses = async (req, res, next) => {
     const userId = verifyResult.userId;
     const isPremiumUser = verifyResult.isPremiumUser;
 
+    const totalExpenses = await Expense.count({ where: { userId: userId } });
+
     const expenses = await Expense.findAll({
       where: { userId: userId },
+      order: [["createdAt", "DESC"]],
       limit: ITEMS_PER_PAGE,
       offset: (page - 1) * ITEMS_PER_PAGE,
     });
+    
 
  
      
@@ -36,7 +41,8 @@ exports.getAllExpenses = async (req, res, next) => {
       hasNextPage: expenses.length === ITEMS_PER_PAGE,  
       hasPreviousPage: parseInt(page) > 1,
       nextPage: parseInt(page) + 1,
-      previousPage: parseInt(page) - 1
+      previousPage: parseInt(page) - 1,
+      totalExpenses,
     })
 
   } catch (err) {

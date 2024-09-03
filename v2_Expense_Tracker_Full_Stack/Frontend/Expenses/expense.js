@@ -12,9 +12,11 @@ const auth = localStorage.getItem("auth");
 if (auth) {
   const decoded = jwt_decode(auth);
   const isPremiumUser = decoded.isPremiumUser;
+
   if (isPremiumUser === true) {
     premiumBtn.outerHTML = `<button id="premiumBtn" class="premium-badge" disabled>You're a Premium User</button>`;
-    leaderboardBtn.outerHTML = ` <button id="show-leaderboard" onclick="showLeaderboard()">Show Leaderboard</button>`;
+    leaderboardBtn.outerHTML = `  <button id="show-leaderboard"  class="btn btn-secondary" onclick="showLeaderboard()">Show Leaderboard</button>`;
+
     leaderboardContainer.style.display = "block";
     downloadBtn.style.display = "block";
     downloadHistoryButton.style.display = "block";
@@ -70,6 +72,10 @@ async function handleFormSubmit(event) {
 
 async function fetchExpenses() {
   const expenseList = document.getElementById("list-group");
+  const pbtn_3 = document.getElementById("pbtn-3");
+  const pbtn_2 = document.getElementById("pbtn-2");
+  const pbtn_1 = document.getElementById("pbtn-1");
+  const pages_size=document.getElementById("pages-size");
 
   try {
     const token = localStorage.getItem("auth");
@@ -77,6 +83,8 @@ async function fetchExpenses() {
       window.location.href = "../login.html";
       return;
     }
+
+  
 
     const res = await axios.get(
       `http://localhost:4000/user/expenses/1`,
@@ -86,8 +94,29 @@ async function fetchExpenses() {
         },
       }
     );
-
+   
     console.log(res.data);
+    pages_size.innerHTML=`  Rows per page: <input  style="width:22px" value=${res.data.totalExpenses}></input> of ${res.data.totalExpenses}`;
+
+    if (res.data.hasNextPage==true) {
+      pbtn_3.style.display = "block"; 
+      pbtn_3.innerText = res.data.nextPage;    
+    } else {
+      pbtn_3.style.display = "none";
+    }
+    
+
+    if (res.data.hasPreviousPage) {
+      pbtn_1.style.display = "block"; 
+      pbtn_1.innerText = res.data.previousPage;
+    
+    } else {
+      pbtn_1.style.display = "none"; 
+    }
+    
+   
+    pbtn_2.style.display = "block"; 
+    pbtn_2.innerText = res.data.currentPage;
 
     const expenses = res.data.expenses;
 
@@ -101,10 +130,10 @@ async function fetchExpenses() {
           <td>${expense.description}</td>
           <td>${expense.category}</td>
           <td>${expense.amount}</td>
-          <td>${expense.amount}</td>
+          <td>₹ ${expense.amount}</td>
           <td>
-            <button class="btn-action edit-btn">Edit</button>
-            <button class="btn-action del-btn">Delete</button>
+            <button class="btn btn-success edit-btn">Edit</button>
+            <button class=" btn btn-danger del-btn">Delete</button>
           </td>
         `;
 
@@ -121,7 +150,7 @@ async function fetchExpenses() {
             );
 
             await fetchExpenses();
-            if (res.data.isPremiumUser) {
+            if (res.data.isPremiumUser==true) {
               await showLeaderboard();
             }
           } catch (error) {
@@ -237,7 +266,9 @@ async function showLeaderboard() {
     if (!token) {
       window.location.href = "../login.html";
     }
-
+  
+    const decoded = jwt_decode(auth);
+    if(decoded.isPremiumUser==true){
     const response = await axios.get(
       "http://localhost:4000/premium/leaderboard",
       {
@@ -269,6 +300,9 @@ async function showLeaderboard() {
     isLeaderboardVisible = !isLeaderboardVisible;
     document.getElementById("leaderboard-container").style.display =
       isLeaderboardVisible ? "block" : "none";
+  }else{
+    alert("You are not a premium user. Please upgrade to premium to access this feature.");
+  }
   } catch (error) {
     console.error("Error fetching leaderboard:", error);
   }
@@ -277,7 +311,7 @@ async function showLeaderboard() {
  async function handleTime() {
   const selectElement = document.getElementById("time");
 
- const res=await getExpensesonCondition(selectElement.value);
+ const res=await getExpensesonCondition(selectElement.value,null);
  console.log(res);
 
 }
@@ -285,15 +319,22 @@ async function showLeaderboard() {
 
 
 //handler function independent of the event
-async function getExpensesonCondition(condition){
+async function getExpensesonCondition(conditionTime,conditionPage){
 
   const token = localStorage.getItem("auth");
   if (!token) {
     window.location.href = "../login.html";
+    let urlpart="";
+  }
+
+  if(conditionPage==null){
+    urlpart=`premium/expenses/${conditionTime}`;
+  }else if(conditionTime==null){
+    urlpart=`user/expenses/${conditionPage}`;
   }
   
   const response = await axios.get(
-    `http://localhost:4000/premium/expenses/${condition}`,
+    `http://localhost:4000/${urlpart}`,
     {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("auth")}`,
@@ -362,6 +403,8 @@ async function handleDownload() {
     if (!token) {
       window.location.href = "../login.html";
     }
+    const decoded = jwt_decode(auth);
+     if(decoded.isPremiumUser==true){
     const response = await axios.get(
       `http://localhost:4000/premium/expenses/download`,
       {
@@ -376,6 +419,9 @@ async function handleDownload() {
     } else {
       alert(response.data.message);
     }
+  }else{
+    alert("You are not a Premium User. Please buy premium to access this feature.")
+  }
   } catch (err) {
     alert("Error downloading expenses, Please try again", err.message);
   }
@@ -389,6 +435,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function fetchAndShowHistory() {
     try {
+      const token=localStorage.getItem("auth");
+  
+      const decoded = jwt_decode(auth);
+ 
+      if(decoded.isPremiumUser==true){
       $(historyModal).modal("show");
 
       // Fetch history data from the server
@@ -427,10 +478,13 @@ document.addEventListener("DOMContentLoaded", () => {
         historyList.innerHTML =
           '<li class="list-group-item">No history available.</li>';
       }
+    }else{
+      alert("You are not a Premium User. Buy Premium to access this feature")
+    }
     } catch (error) {
-      console.error("Error fetching history:", error);
+      console.error("Error fetching history: Login Again", error);
       historyList.innerHTML =
-        '<li class="list-group-item">Error fetching history.</li>';
+        '<li class="list-group-item">Error fetching history. Login Again </li>';
     }
   }
 
@@ -447,7 +501,70 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-async function paginate() {
+
+//********************pagination logic**********************
+
+
+
+const pbtn_1 = document.getElementById("pbtn-1");
+const pbtn_2 = document.getElementById("pbtn-2");
+const pbtn_3 = document.getElementById("pbtn-3");
+
+pbtn_1.addEventListener("click", (e) => {
+
+  paginate(e.target.innerText);
+
+})
+
+pbtn_2.addEventListener("click", (e) => {
+   
+  
+  paginate(e.target.innerText);
+})
+
+pbtn_3.addEventListener("click", (e) => 
+  {
+    paginate(e.target.innerText);
+  })
+
+async function paginate(page) {
+
+  const token = localStorage.getItem("auth");
+  if (!token) {
+    window.location.href = "../login.html";
+  } 
+  
+const res= await getExpensesonCondition(null,page);
+ 
+console.log(res);
+if (res.hasNextPage==true) {
+  pbtn_3.style.display = "block"; // Show the "next" page button
+  pbtn_3.innerText = res.nextPage;    
+} else {
+  pbtn_3.style.display = "none"; // Hide the "next" page button
+}
+
+// Check if there is a previous page
+if (res.hasPreviousPage) {
+  pbtn_1.style.display = "block"; // Show the "previous" page button
+  pbtn_1.innerText = res.previousPage;
+
+} else {
+  pbtn_1.style.display = "none"; // Hide the "previous" page button
+}
+
+// Check if the current page is the first page
+pbtn_2.style.display = "block"; // Hide the "current page" button or similar
+pbtn_2.innerText = res.currentPage;
+
+
+
+
+
+
+
+
+
 
 
 }

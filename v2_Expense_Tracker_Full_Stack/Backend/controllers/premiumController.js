@@ -6,9 +6,10 @@ const filesUploaded = require("../models/filesUploaded");
 
 exports.getLeaderboard = async (req, res, next) => {
   try {
-    const isPremium = req.user.isPremium;
+    const isPremium = req.user.dataValues.isPremiumUser;
+    
 
-    if (isPremium == true) {
+    if (isPremium == false) {
       return res.status(403).json({
         success: false,
         message:
@@ -46,7 +47,7 @@ exports.downloadExpenses = async (req, res, next) => {
 
   try{
 
-    const isPremium = req.user.isPremiumUser;
+    const isPremium = req.user.dataValues.isPremiumUser;
   
 
     if (!isPremium) {
@@ -93,9 +94,8 @@ exports.downloadHistory = async (req, res, next) => {
 
   try{
 
-    const isPremium = req.user.isPremiumUser;
+    const isPremium = req.user.dataValues.isPremiumUser;
   
-
     if (!isPremium) {
       return res.json({
         success: false,
@@ -122,5 +122,10 @@ exports.downloadHistory = async (req, res, next) => {
 }
 
 exports.downloadExpensesByTime = async (req, res, next) => {
-  res.send({"msg":"Bhai ban rha kal aana"});  
+      
+   const time=req.params.time;
+
+    
+
+
 }
