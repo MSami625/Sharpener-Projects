@@ -5,6 +5,7 @@ const leaderboardBtn = document.getElementById("show-leaderboard");
 const leaderboardContainer = document.querySelector("#leaderboard-container");
 const downloadBtn = document.getElementById("download");
 const downloadHistoryButton = document.getElementById("downloadhistory");
+const timeBtn = document.getElementById("time");
 
 const auth = localStorage.getItem("auth");
 
@@ -17,6 +18,7 @@ if (auth) {
     leaderboardContainer.style.display = "block";
     downloadBtn.style.display = "block";
     downloadHistoryButton.style.display = "block";
+    timeBtn.style.display = "block";
   }
 } else {
   window.location.href = "../login.html";
@@ -76,11 +78,16 @@ async function fetchExpenses() {
       return;
     }
 
-    const res = await axios.get("http://localhost:4000/user/expenses/", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res = await axios.get(
+      `http://localhost:4000/user/expenses/1`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log(res.data);
 
     const expenses = res.data.expenses;
 
@@ -267,15 +274,26 @@ async function showLeaderboard() {
   }
 }
 
-async function handleTime() {
+ async function handleTime() {
   const selectElement = document.getElementById("time");
+
+ const res=await getExpensesonCondition(selectElement.value);
+ console.log(res);
+
+}
+
+
+
+//handler function independent of the event
+async function getExpensesonCondition(condition){
 
   const token = localStorage.getItem("auth");
   if (!token) {
     window.location.href = "../login.html";
   }
+  
   const response = await axios.get(
-    `http://localhost:4000/user/expenses/${selectElement.value}`,
+    `http://localhost:4000/premium/expenses/${condition}`,
     {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("auth")}`,
@@ -285,7 +303,8 @@ async function handleTime() {
   const expenses = response.data.expenses;
   const expenseList = document.getElementById("list-group");
   expenseList.innerHTML = "";
-  if (expenses.length != 0) {
+  // console.log(response.data.msg);
+  if (expenses) {
     expenses.forEach((expense) => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
@@ -332,7 +351,10 @@ async function handleTime() {
       expenseList.appendChild(tr);
     });
   }
+
+  return response.data;
 }
+
 
 async function handleDownload() {
   try {
@@ -365,39 +387,42 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeButton = document.querySelector("#historyModal .close");
   const historyList = document.getElementById("history-list");
 
- 
   async function fetchAndShowHistory() {
     try {
-   
       $(historyModal).modal("show");
 
-    // Fetch history data from the server
-      const response = await axios.get("http://localhost:4000/premium/expenses/downhistory",{
-        headers: {  
-          Authorization: `Bearer ${localStorage.getItem("auth")}`,
-        },
-      }); 
+      // Fetch history data from the server
+      const response = await axios.get(
+        "http://localhost:4000/premium/expenses/downhistory",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth")}`,
+          },
+        }
+      );
 
       historyList.innerHTML = "";
 
-     
-      if (response) {
+      if (response && response.data.files.length > 0) {
         response.data.files.forEach((item) => {
-          const listItem = document.createElement('li');
+          const listItem = document.createElement("li");
 
-          listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
-          
-          const truncatedUrl = item.url.length > 50 ? item.url.substring(51, item.url.length / 2.1) + '...' : item.url;
-          
+          listItem.className =
+            "list-group-item d-flex justify-content-between align-items-center";
+
+          const truncatedUrl =
+            item.url.length > 50
+              ? item.url.substring(51, item.url.length / 2.1) + "..."
+              : item.url;
+
           listItem.innerHTML = `
         
             <b">${item.id}. ${truncatedUrl}</b> |
             <a href="${item.url}" download class="btn btn-primary btn-sm">Download</a>
           `;
-          
+
           historyList.appendChild(listItem);
         });
-
       } else {
         historyList.innerHTML =
           '<li class="list-group-item">No history available.</li>';
@@ -409,18 +434,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  
   downloadHistoryButton.addEventListener("click", fetchAndShowHistory);
 
- 
   closeButton.addEventListener("click", () => {
     $(historyModal).modal("hide");
   });
 
-  
   window.addEventListener("click", (event) => {
     if (event.target === historyModal) {
       $(historyModal).modal("hide");
     }
   });
 });
+
+async function paginate() {
+
+
+}

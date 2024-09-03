@@ -233,7 +233,28 @@ header #login-button:hover {
     overflow-x: auto; /* Enable horizontal scrolling */
     margin-bottom: 5px;
     display: flex;
+    flex-direction: column;
     
+}
+
+.pagination-btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+.pagination-btn button{
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+.pagination-btn button:nth-child(2) {
+    padding: 7px 12px;
 }
 
 /* Download Button Styles */
@@ -478,7 +499,10 @@ header #login-button:hover {
 }
 
 /* Show Leaderboard Button */
-
+ 
+.table{
+    margin-bottom: 5px;
+}
 /* Leaderboard Table Header */
 #leaderboard-table {
     width: 100%;

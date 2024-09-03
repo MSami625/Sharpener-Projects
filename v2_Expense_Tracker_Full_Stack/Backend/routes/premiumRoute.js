@@ -7,5 +7,6 @@ const authenticate = require("../middlewares/authenticate");
 router.get('/premium/leaderboard',authenticate, purchasePremiumController.getLeaderboard);
 router.get('/premium/expenses/download',authenticate, purchasePremiumController.downloadExpenses);
 router.get('/premium/expenses/downhistory',authenticate, purchasePremiumController.downloadHistory);
+router.get("/premium/expenses/:time", authenticate, purchasePremiumController.downloadExpensesByTime);
 
 module.exports = router;

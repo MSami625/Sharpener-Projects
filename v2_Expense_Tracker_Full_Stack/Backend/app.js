@@ -39,8 +39,8 @@ app.use('/',forgotPwRoute);
 
 
 sequelize
-  .sync({ alter: true })
-  // .sync()
+  // .sync({ alter: true })
+  .sync()
   .then((result) => {
     console.log(result);
   })

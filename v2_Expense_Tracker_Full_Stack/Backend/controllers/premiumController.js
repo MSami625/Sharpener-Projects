@@ -120,3 +120,7 @@ exports.downloadHistory = async (req, res, next) => {
     });
   }
 }
+
+exports.downloadExpensesByTime = async (req, res, next) => {
+  res.send({"msg":"Bhai ban rha kal aana"});  
+}

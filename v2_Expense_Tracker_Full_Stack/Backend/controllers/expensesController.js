@@ -6,19 +6,39 @@ const sequelize = require("../util/database");
 
 exports.getAllExpenses = async (req, res, next) => {
   try {
+
+    const ITEMS_PER_PAGE = 10;  
+     
+    const page =parseInt(req.params.condition) || 1;
+    console.log('page:', page);
    
     const token = req.headers.authorization ? req.headers.authorization.split(" ")[1] : null;
     if (!token) {
       return res.status(401).json({ message: "Token not found" });
     }
 
-     var verifyResult = jwt.verify(token, secret);
+    var verifyResult = jwt.verify(token, secret);
     const userId = verifyResult.userId;
     const isPremiumUser = verifyResult.isPremiumUser;
 
-    const expenses = await Expense.findAll({ where: { userId: userId } });
+    const expenses = await Expense.findAll({
+      where: { userId: userId },
+      limit: ITEMS_PER_PAGE,
+      offset: (page - 1) * ITEMS_PER_PAGE,
+    });
 
-    res.status(200).json({ expenses, isPremiumUser });
+ 
+     
+    res.status(200).json({
+      expenses,
+      isPremiumUser,
+      currentPage: parseInt(page),
+      hasNextPage: expenses.length === ITEMS_PER_PAGE,  
+      hasPreviousPage: parseInt(page) > 1,
+      nextPage: parseInt(page) + 1,
+      previousPage: parseInt(page) - 1
+    })
+
   } catch (err) {
     console.error(err);
     res.status(500).json({
