@@ -19,6 +19,8 @@ async function handleSignUp(e) {
     document.getElementById("email").value = "";
     document.getElementById("password").value = "";
     document.getElementById("name").value = "";
+
+    window.location.href = "login.html";
   } catch (err) {
     alert(err.response.data.error);
   }
