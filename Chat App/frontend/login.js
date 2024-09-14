@@ -9,10 +9,11 @@ async function handleLogin(e) {
       email: email,
       password: password,
     });
-    console.log(response.data.token);
+
     let token = `Bearer ${response.data.token}`;
     localStorage.setItem("token", token);
     alert(response.data.message);
+    window.location.href = "./chats.html";
   } catch (err) {
     alert(err.response.data.error);
   }
