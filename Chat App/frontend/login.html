@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign Up</title>
+    <title>Login</title>
     <link rel="stylesheet" href="./auth.css" />
     <link rel="icon" href="./assets/favicon.png" />
 
@@ -17,37 +17,30 @@
   </head>
   <body>
     <div class="container">
-      <div class="SignUp-box">
+      <div class="Login-box">
         <div class="header">
           <img src="./assets/chatlogo.png" alt="ChatApp Logo" class="logo" />
-          <h1>SignUp to <span id="appname">ChatApp</span></h1>
+          <h1>Login to <span id="appname">ChatApp</span></h1>
         </div>
-        <form onsubmit="handleSignUp(event)">
-          <div class="textbox">
-            <input type="text" id="name" required />
-            <label for="name">Your Name</label>
-          </div>
+        <form onsubmit="handleLogin(event)">
           <div class="textbox">
             <input type="email" id="email" required />
             <label for="email">Email</label>
           </div>
           <div class="textbox">
-            <input type="text" id="phone" required />
-            <label for="phone">Phone Number</label>
-          </div>
-          <div class="textbox">
             <input type="password" id="password" required />
             <label for="password">Password</label>
           </div>
-          <input type="submit" class="btn" value="Sign Up" />
+          <input type="submit" class="btn" value="Login" />
         </form>
-        <p class="forgot-password">
-          Already have account?
-          <a href="./login.html"><b style="font-size: medium">Login</b> </a>
+        <p class="forgot-password"><a href="#">Forgot your password?</a></p>
+        <p class="signup-link">
+          Don't have an account?
+          <a href="./signup.html"><b style="font-size: medium">Sign Up</b></a>
         </p>
       </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js"></script>
-    <script src="./signup.js"></script>
+    <script src="./login.js"></script>
   </body>
 </html>

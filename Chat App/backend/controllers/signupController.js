@@ -35,3 +35,14 @@ exports.signup = async (req, res) => {
     console.log(err);
   }
 };
+
+exports.login = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ where: { email: email } });
+  } catch (err) {
+    res.status(500).json({ error: "Internal Server Error" });
+    console.log(err);
+  }
+};

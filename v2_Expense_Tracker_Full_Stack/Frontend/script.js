@@ -15,7 +15,7 @@ async function handleFormSubmitSignUp(e) {
 
     const res = await axios.post("http://localhost:4000/signup", userDetails);
     alert(res.data.message);
-  
+
     window.location.href = "./login.html";
   } catch (err) {
     if (err.response && err.response.data && err.response.data.message) {
