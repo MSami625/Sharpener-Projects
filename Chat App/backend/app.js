@@ -4,6 +4,8 @@ const User = require("./model/User");
 const sequelize = require("./utils/database");
 const signupRoute = require("./routes/authRoute");
 const cors = require("cors");
+const Messages = require("./model/Messages");
+const UserMsgRoute = require("./routes/UserMsgRoute");
 
 const app = express();
 app.use(
@@ -13,9 +15,14 @@ app.use(
 );
 app.use(express.json());
 
+User.hasMany(Messages);
+Messages.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
+
 app.use("/api", signupRoute);
+app.use("/api", UserMsgRoute);
 
 sequelize
+  // .sync({ force: true })
   .sync()
   .then((res) => {
     console.log(res);

@@ -18,9 +18,7 @@
         <div class="logo-container">
           <img src="./assets/chatlogo.png" alt="Logo" class="logo" />
         </div>
-        <div id="users-list">
-          <!-- User list will be dynamically populated here -->
-        </div>
+        <div id="users-list"></div>
       </div>
       <div class="chat-area">
         <div class="top-navbar">
@@ -29,10 +27,8 @@
             <span class="bar"></span>
             <span class="bar"></span>
           </button>
-          <!-- Optionally, you can include a title or other elements here -->
         </div>
         <div class="chat-messages" id="chat-messages">
-          <!-- Chat messages will be dynamically populated here -->
           <div class="message sender">
             <div class="message-content">
               <div class="message-info">
@@ -53,14 +49,16 @@
             </div>
           </div>
         </div>
-        <div class="chat-input">
-          <input
-            type="text"
-            id="message-input"
-            placeholder="Type a message..."
-          />
-          <button id="send-button">Send</button>
-        </div>
+        <form onsubmit="handleMsgSubmit(event)">
+          <div class="chat-input">
+            <input
+              type="text"
+              id="message-input"
+              placeholder="Type a message..."
+            />
+            <button type="submit" id="send-button">Send</button>
+          </div>
+        </form>
       </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js"></script>
