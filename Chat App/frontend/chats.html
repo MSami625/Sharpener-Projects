@@ -29,6 +29,7 @@
           </button>
         </div>
         <div class="chat-messages" id="chat-messages">
+          <!-- messages -->
           <div class="message sender">
             <div class="message-content">
               <div class="message-info">
@@ -48,6 +49,8 @@
               <p>This is a message received from someone else.</p>
             </div>
           </div>
+
+          <!-- end -->
         </div>
         <form onsubmit="handleMsgSubmit(event)">
           <div class="chat-input">
@@ -62,6 +65,7 @@
       </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
     <script src="chats.js"></script>
   </body>
 </html>
