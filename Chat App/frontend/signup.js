@@ -20,7 +20,7 @@ async function handleSignUp(e) {
     document.getElementById("password").value = "";
     document.getElementById("name").value = "";
 
-    window.location.href = "login.html";
+    window.location.href = "./login.html";
   } catch (err) {
     alert(err.response.data.error);
   }

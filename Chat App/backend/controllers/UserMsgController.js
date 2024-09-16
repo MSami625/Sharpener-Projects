@@ -11,9 +11,11 @@ exports.postUserMsg = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    console.log(req.user.name);
     const isStored = await Messages.create({
       message,
       userId: req.user.id,
+      senderName: req.user.name,
     });
 
     if (!isStored) {
@@ -31,7 +33,20 @@ exports.postUserMsg = async (req, res) => {
 
 exports.getAllMessages = async (req, res) => {
   try {
-    const messages = await Messages.findAll();
+    let MAX_MESSAGES = 10;
+
+    const page = parseInt(req.query.page, 10) || 1;
+    if (page < 1) {
+      return res.status(400).json({ message: "Page must be greater than 0" });
+    }
+
+    const offset = (page - 1) * MAX_MESSAGES;
+
+    let messages = await Messages.findAll({
+      order: [["createdAt", "DESC"]],
+      limit: MAX_MESSAGES,
+      offset: offset,
+    });
 
     if (!messages) {
       return res.status(404).json({ message: "No messages found" });
