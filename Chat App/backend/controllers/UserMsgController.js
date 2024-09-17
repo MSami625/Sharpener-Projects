@@ -4,6 +4,13 @@ const Messages = require("../model/Messages");
 exports.postUserMsg = async (req, res) => {
   try {
     const { message } = req.body;
+    const groupId = req.body.groupId;
+
+    if (!message || !groupId) {
+      return res
+        .status(400)
+        .json({ message: "Select or Create any Group to send Messages" });
+    }
 
     const user = await User.findByPk(req.user.id);
 
@@ -16,6 +23,7 @@ exports.postUserMsg = async (req, res) => {
       message,
       userId: req.user.id,
       senderName: req.user.name,
+      groupId,
     });
 
     if (!isStored) {
@@ -34,6 +42,11 @@ exports.postUserMsg = async (req, res) => {
 exports.getAllMessages = async (req, res) => {
   try {
     let MAX_MESSAGES = 10;
+    const groupId = req.query.groupId;
+
+    if (!groupId) {
+      return res.status(400).json({ message: "Group Id is required" });
+    }
 
     const page = parseInt(req.query.page, 10) || 1;
     if (page < 1) {
@@ -43,6 +56,7 @@ exports.getAllMessages = async (req, res) => {
     const offset = (page - 1) * MAX_MESSAGES;
 
     let messages = await Messages.findAll({
+      where: { groupId },
       order: [["createdAt", "DESC"]],
       limit: MAX_MESSAGES,
       offset: offset,
