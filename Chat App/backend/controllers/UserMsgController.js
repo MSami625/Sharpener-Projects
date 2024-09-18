@@ -1,5 +1,6 @@
 const User = require("../model/User");
 const Messages = require("../model/Messages");
+const { Op } = require("sequelize");
 
 exports.postUserMsg = async (req, res) => {
   try {
@@ -67,6 +68,43 @@ exports.getAllMessages = async (req, res) => {
     }
 
     return res.status(200).json({ messages });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+exports.searchUsers = async (req, res) => {
+  try {
+    const search = req.query.name;
+    console.log(search);
+
+    if (!search) {
+      return res.status(400).json({ message: "Search Query is required" });
+    }
+
+    const users = await User.findAll({
+      where: {
+        [Op.or]: [
+          {
+            name: {
+              [Op.like]: `%${search}%`,
+            },
+          },
+          {
+            phoneNumber: {
+              [Op.like]: `%${search}%`,
+            },
+          },
+        ],
+      },
+    });
+
+    if (!users) {
+      return res.status(404).json({ message: "No users found" });
+    }
+
+    return res.status(200).json({ users });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "Internal Server Error" });

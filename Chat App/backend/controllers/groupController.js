@@ -106,9 +106,9 @@ exports.getGroupById = async (req, res) => {
 
 exports.addMember = async (req, res) => {
   try {
-    const { email, memberId, groupId } = req.body;
+    const { id, groupId } = req.body;
 
-    if (!email || !memberId || !groupId) {
+    if (!id || !groupId) {
       return res.status(400).json({
         message: "All fields are required, Select a Group first and try again",
       });
@@ -129,11 +129,11 @@ exports.addMember = async (req, res) => {
       });
     }
 
-    if (memberId === req.user.id) {
+    if (id === req.user.id) {
       return res.status(400).json({ message: "You cannot add yourself" });
     }
 
-    const user = await User.findOne({ where: { email, id: memberId } });
+    const user = await User.findOne({ where: { id } });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -147,6 +147,45 @@ exports.addMember = async (req, res) => {
     await group.addUser(user);
 
     return res.status(201).json({ message: "User added successfully" });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+exports.getGroupMembers = async (req, res) => {
+  try {
+    const groupId = req.params.groupId;
+
+    if (!groupId) {
+      return res.status(400).json({ message: "Group Id is required" });
+    }
+
+    const group = await Group.findByPk(groupId);
+
+    if (!group) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+
+    const members = await User.findAll({
+      include: [
+        {
+          model: Group,
+          as: "groups",
+          where: { id: groupId },
+          required: true,
+        },
+      ],
+    });
+
+    if (!members) {
+      await Group.destroy({ where: { id: groupId } });
+      return res
+        .status(404)
+        .json({ message: "No Users or Admin ! Group has been destroyed" });
+    }
+
+    return res.status(200).json({ members });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "Internal Server Error" });

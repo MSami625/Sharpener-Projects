@@ -278,7 +278,7 @@ async function handleGroupClick(buttonElement) {
 
       currentPage = 1;
       fetchMessages(1, groupId);
-      updateDropdown(groupDetails.usersInGroup);
+      fetchCurrentGroupMembers(groupDetails.usersInGroup);
     } catch (error) {
       console.error("Error fetching group details:", error);
     }
@@ -333,12 +333,67 @@ async function handleGroupSubmit(e) {
   }
 }
 
-async function handleAddMembersSubmit(e) {
-  e.preventDefault();
+let timeoutId;
 
-  const email = document.getElementById("user-email").value;
-  const memberId = document.getElementById("user-id").value;
+async function searchUsers(value) {
+  if (timeoutId) {
+    clearTimeout(timeoutId);
+  }
 
+  //debounced search
+
+  timeoutId = setTimeout(async () => {
+    if (!value) {
+      console.log([]);
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        `http://localhost:4000/api/users/search?name=${encodeURIComponent(
+          value
+        )}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+
+      const users = response.data.users;
+      renderUsers(users);
+      console.log(users);
+    } catch (err) {
+      console.log(err);
+    }
+  }, 300);
+}
+
+function renderUsers(users) {
+  const searchResults = document.getElementById("search-results");
+  searchResults.innerHTML = "";
+
+  users.forEach((user) => {
+    const userItem = document.createElement("div");
+    userItem.className = "search-item";
+    userItem.innerHTML = `
+   <div class="user-card card">
+  <div class="p-2 d-flex justify-content-between align-items-center">
+  <div style="display:flex; justify-content:center; align-items:center; gap:15px;">
+      <h5 class="user-name mb-1">${user.name}</h5>
+      <p class="user-phone mb-0 text-muted">Phone: ${user.phoneNumber}</p> 
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="handleAddMemberClick(${user.id})">Add</button>
+   
+  </div>
+</div>
+
+    `;
+    searchResults.appendChild(userItem);
+  });
+}
+
+async function handleAddMemberClick(id) {
   if (currentGroupId === null) {
     alert("Please select a group first");
     return;
@@ -350,8 +405,7 @@ async function handleAddMembersSubmit(e) {
     const response = await axios.post(
       "http://localhost:4000/api/user/addMember",
       {
-        email,
-        memberId,
+        id,
         groupId,
       },
       {
@@ -361,39 +415,67 @@ async function handleAddMembersSubmit(e) {
       }
     );
 
-    document.getElementById("user-email").value = "";
-    document.getElementById("user-id").value = "";
+    document.getElementById("search-results").innerHTML = "";
+    document.getElementById("search-user").value = "";
 
     alert(response.data.message);
 
+    updateDropdown(response.data.usersInGroup);
+
     fetchGroups();
+  } catch (err) {
+    console.log(err);
+    document.getElementById("search-results").innerHTML = "";
+    document.getElementById("search-user").value = "";
+
+    alert(err.response.data.message);
+  }
+}
+
+async function fetchCurrentGroupMembers() {
+  if (currentGroupId === null) {
+    alert("Please select a group first");
+    return;
+  }
+
+  const groupId = currentGroupId;
+
+  try {
+    const response = await axios.get(
+      `http://localhost:4000/api/groupmembers/${groupId}`,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+
+    renderAddedMembers(response.data);
   } catch (err) {
     console.log(err);
     alert(err.response.data.message);
   }
 }
-function updateDropdown(users) {
-  const dropdownContent = document.getElementById("dropdown-content");
 
-  // Clear existing content
-  dropdownContent.innerHTML = "";
+function renderAddedMembers(users) {
+  const addedMembersContainer = document.getElementById("added-members");
+  addedMembersContainer.innerHTML = "";
 
-  // Populate dropdown with user details
-  users.forEach((user) => {
-    const userItem = document.createElement("a");
-    userItem.href = "#";
+  if (members.length === 0) {
+    addedMembersContainer.innerHTML = "<p>No members added yet.</p>";
+    return;
+  }
 
-    // Create a formatted string for the user item
-    userItem.innerHTML = `
-      <div style="text-align:center;">
-        <span>${user.name}</span>
-        <span style="font-size: 12px; color: #F00;">ID: #${user.id} | Role: ${
-      user.id == adminUsers[0].id ? "Admin" : "Member"
-    }</span>
-      </div>
+  members.forEach((member) => {
+    const memberCard = document.createElement("div");
+    memberCard.className =
+      "added-member d-flex justify-content-between align-items-center my-2 p-2 border rounded";
+
+    memberCard.innerHTML = `
+      <span class="member-name">${member.name}</span>
+      <button class="btn btn-danger btn-sm" onclick="handleRemoveMemberClick(${member.id})">Remove</button>
     `;
 
-    // Append the user item to the dropdown content
-    dropdownContent.appendChild(userItem);
+    addedMembersContainer.appendChild(memberCard);
   });
 }

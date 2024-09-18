@@ -7,5 +7,10 @@ router.post("/user/createGroup", authenticate, groupController.createGroup);
 router.get("/getGroups", authenticate, groupController.getGroups);
 router.get("/groups/:groupId", authenticate, groupController.getGroupById);
 router.post("/user/addMember", authenticate, groupController.addMember);
+router.get(
+  "/groupmembers/:groupId",
+  authenticate,
+  groupController.getGroupMembers
+);
 
 module.exports = router;
