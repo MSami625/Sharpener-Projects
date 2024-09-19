@@ -1,10 +1,11 @@
 let currentPage = 1;
 let loadingMessages = false;
 var adminUsers = [];
+const socket = io("http://localhost:4000");
 
 const token = localStorage.getItem("token");
 
-// setInterval(() => fetchMessages(1), 3000);
+// setInterval(() => fetchMessages(1), 3000); now using websockets hahahaha bye bye...
 
 window.onload = () => fetchGroups();
 
@@ -48,32 +49,61 @@ async function fetchMessages(page, groupId) {
   }
 }
 
-async function handleMsgSubmit(e, groupId) {
-  e.preventDefault();
-  const message = document.getElementById("message-input").value;
+async function handleMsgSubmit(event) {
+  event.preventDefault();
+  const messageInput = document.getElementById("message-input");
+  const message = messageInput.value;
 
-  try {
-    await axios.post(
-      "http://localhost:4000/api/user/message",
-      {
-        message,
-        groupId,
-      },
-      {
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
+  socket.emit("sendMessage", {
+    message,
+    groupId: currentGroupId,
+    token,
+  });
 
-    document.getElementById("message-input").value = "";
+  messageInput.value = "";
+  currentPage = 1;
+}
 
-    fetchMessages(1, groupId);
-    currentPage = 1;
-  } catch (err) {
-    console.log(err);
-    alert(err.response.data.message);
+socket.on("receiveMessage", (msg) => {
+  if (msg.groupId === currentGroupId) {
+    renderSentMessage([msg]);
   }
+});
+
+function renderSentMessage(messages) {
+  const chatBox = document.getElementById("chat-messages");
+  messages.forEach((msg) => {
+    const message = document.createElement("div");
+    message.className =
+      msg.userId === currentUserId ? "message sender" : "message receiver";
+
+    message.innerHTML = `
+          <div class="message-content">
+              <div class="message-info">
+                  <span class="username">${
+                    msg.userId === currentUserId ? "~You" : `~${msg.senderName}`
+                  }  ${
+      msg.userId != currentUserId
+        ? `<span class="message-timestamp">new</span>`
+        : ` <span class="timestamp">${new Date(
+            msg.createdAt
+          ).toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}</span>`
+    }
+     
+              </div>
+              <p>${msg.message}</p>
+          </div>
+      `;
+
+    chatBox.appendChild(message);
+
+    if (msg.userId === currentUserId) {
+      scrollToBottom();
+    }
+  });
 }
 
 function renderMessages(messages, prepend = false, groupId) {
@@ -403,7 +433,7 @@ async function handleAddMemberClick(id) {
 
   try {
     const response = await axios.post(
-      "http://localhost:4000/api/user/addMember",
+      "http://localhost:4000/api/group/addMember",
       {
         id,
         groupId,
@@ -420,14 +450,13 @@ async function handleAddMemberClick(id) {
 
     alert(response.data.message);
 
-    updateDropdown(response.data.usersInGroup);
+    renderAddedMembers(response.data.users);
 
     fetchGroups();
   } catch (err) {
     console.log(err);
     document.getElementById("search-results").innerHTML = "";
     document.getElementById("search-user").value = "";
-
     alert(err.response.data.message);
   }
 }
@@ -450,14 +479,16 @@ async function fetchCurrentGroupMembers() {
       }
     );
 
-    renderAddedMembers(response.data);
+    console.log(response.data.members);
+
+    renderAddedMembers(response.data.members);
   } catch (err) {
     console.log(err);
     alert(err.response.data.message);
   }
 }
 
-function renderAddedMembers(users) {
+function renderAddedMembers(members) {
   const addedMembersContainer = document.getElementById("added-members");
   addedMembersContainer.innerHTML = "";
 
@@ -473,9 +504,42 @@ function renderAddedMembers(users) {
 
     memberCard.innerHTML = `
       <span class="member-name">${member.name}</span>
-      <button class="btn btn-danger btn-sm" onclick="handleRemoveMemberClick(${member.id})">Remove</button>
+      <span class="member-role">${
+        adminUsers[0].id == member.id ? "admin" : "member"
+      }</span>
+      <span class="member-phone">Phone: ${member.phoneNumber}</span>  
+      <button class="btn btn-danger btn-sm" onclick="handleRemoveMemberClick(${
+        member.id
+      })">Remove</button>
     `;
 
     addedMembersContainer.appendChild(memberCard);
   });
+}
+
+async function handleRemoveMemberClick(id) {
+  if (currentGroupId === null) {
+    alert("Please select a group first");
+    return;
+  }
+
+  const groupId = currentGroupId;
+
+  try {
+    const response = await axios.delete(
+      `http://localhost:4000/api/group/removeMember?id=${id}&groupId=${groupId}`,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+
+    alert(response.data.message);
+
+    renderAddedMembers(response.data.users);
+  } catch (err) {
+    console.log(err);
+    alert(err.response.data.message);
+  }
 }

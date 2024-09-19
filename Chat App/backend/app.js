@@ -1,18 +1,32 @@
-dotenv = require("dotenv").config();
+require("dotenv").config();
 const express = require("express");
-const User = require("./model/User");
-const sequelize = require("./utils/database");
-const signupRoute = require("./routes/authRoute");
+const http = require("http");
+const socketIo = require("socket.io");
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
+const sequelize = require("./utils/database");
+const User = require("./model/User");
 const Messages = require("./model/Messages");
-const UserMsgRoute = require("./routes/UserMsgRoute");
 const Group = require("./model/Group");
+const signupRoute = require("./routes/authRoute");
+const UserMsgRoute = require("./routes/UserMsgRoute");
 const groupRoute = require("./routes/groupRoute");
+const axios = require("axios");
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: "http://127.0.0.1:5500",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Authorization"],
+    credentials: true,
+  },
+});
+
 app.use(
   cors({
-    origin: "http://127.0.0.1:5500",
+    origin: "*",
   })
 );
 app.use(express.json());
@@ -30,12 +44,48 @@ app.use("/api", signupRoute);
 app.use("/api", UserMsgRoute);
 app.use("/api", groupRoute);
 
+// Socket.IO Connection
+io.on("connection", (socket) => {
+  console.log(socket.id, " connected");
+
+  socket.on("sendMessage", async (data) => {
+    const messageData = {
+      message: data.message,
+      groupId: data.groupId,
+    };
+
+    try {
+      const response = await axios.post(
+        "http://localhost:4000/api/user/message",
+        messageData,
+        {
+          headers: {
+            Authorization: `${data.token}`,
+          },
+        }
+      );
+
+      io.emit("receiveMessage", {
+        message: data.message,
+        senderName: response.data.senderName,
+        userId: response.data.userId,
+        groupId: data.groupId,
+        createdAt: response.data.createdAt,
+      });
+    } catch (dbError) {
+      console.error("Error saving message to the database:", dbError);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
+  });
+});
+
 sequelize
-  // .sync({ force: true })
   .sync()
-  .then((res) => {
-    console.log(res);
-    app.listen(4000, () => {
+  .then(() => {
+    server.listen(4000, () => {
       console.log("Server is running on port 4000");
     });
   })
