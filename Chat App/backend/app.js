@@ -49,9 +49,12 @@ io.on("connection", (socket) => {
   console.log(socket.id, " connected");
 
   socket.on("sendMessage", async (data) => {
+    const { message, fileUrl, groupId } = data;
+
     const messageData = {
-      message: data.message,
-      groupId: data.groupId,
+      message,
+      fileUrl,
+      groupId,
     };
 
     try {
@@ -66,10 +69,11 @@ io.on("connection", (socket) => {
       );
 
       io.emit("receiveMessage", {
-        message: data.message,
+        message: message || "file message",
+        fileUrl: fileUrl || null,
         senderName: response.data.senderName,
         userId: response.data.userId,
-        groupId: data.groupId,
+        groupId: groupId,
         createdAt: response.data.createdAt,
       });
     } catch (dbError) {
@@ -84,6 +88,7 @@ io.on("connection", (socket) => {
 
 sequelize
   .sync()
+  // .sync({ force: true })
   .then(() => {
     server.listen(4000, () => {
       console.log("Server is running on port 4000");

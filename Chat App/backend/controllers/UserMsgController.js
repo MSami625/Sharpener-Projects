@@ -1,37 +1,43 @@
 const User = require("../model/User");
 const Messages = require("../model/Messages");
 const { Op } = require("sequelize");
+const AWS = require("aws-sdk");
+const multer = require("multer");
+const multerS3 = require("multer-s3");
+const { v4: uuidv4 } = require("uuid"); // For unique file names
+
+// Configure AWS S3
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: "ap-south-1", // Mumbai region
+});
+
+const s3 = new AWS.S3();
+
+const storage = multer.memoryStorage(); // Store files in memory
+const upload = multer({ storage });
 
 exports.postUserMsg = async (req, res) => {
   try {
-    const { message } = req.body;
-    const groupId = req.body.groupId;
+    const { message, groupId, fileUrl } = req.body;
 
-    if (!message || !groupId) {
-      return res
-        .status(400)
-        .json({ message: "Select or Create any Group to send Messages" });
+    if (!groupId) {
+      return res.status(400).json({ message: "Group Id is required" });
     }
 
     const user = await User.findByPk(req.user.id);
-
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    console.log(req.user.name);
     const isStored = await Messages.create({
       message,
       userId: req.user.id,
       senderName: req.user.name,
       groupId,
+      fileUrl,
     });
-
-    if (!isStored) {
-      return res
-        .status(400)
-        .json({ message: "Some error occured while saving the message" });
-    }
 
     return res.status(201).json({
       message: "Message saved successfully",
@@ -40,14 +46,14 @@ exports.postUserMsg = async (req, res) => {
       createdAt: isStored.createdAt,
     });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
 exports.getAllMessages = async (req, res) => {
   try {
-    let MAX_MESSAGES = 10;
+    const MAX_MESSAGES = 10;
     const groupId = req.query.groupId;
 
     if (!groupId) {
@@ -60,21 +66,16 @@ exports.getAllMessages = async (req, res) => {
     }
 
     const offset = (page - 1) * MAX_MESSAGES;
-
-    let messages = await Messages.findAll({
+    const messages = await Messages.findAll({
       where: { groupId },
       order: [["createdAt", "DESC"]],
       limit: MAX_MESSAGES,
       offset: offset,
     });
 
-    if (!messages) {
-      return res.status(404).json({ message: "No messages found" });
-    }
-
     return res.status(200).json({ messages });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -82,7 +83,6 @@ exports.getAllMessages = async (req, res) => {
 exports.searchUsers = async (req, res) => {
   try {
     const search = req.query.name;
-    console.log(search);
 
     if (!search) {
       return res.status(400).json({ message: "Search Query is required" });
@@ -91,27 +91,52 @@ exports.searchUsers = async (req, res) => {
     const users = await User.findAll({
       where: {
         [Op.or]: [
-          {
-            name: {
-              [Op.like]: `%${search}%`,
-            },
-          },
-          {
-            phoneNumber: {
-              [Op.like]: `%${search}%`,
-            },
-          },
+          { name: { [Op.like]: `%${search}%` } },
+          { phoneNumber: { [Op.like]: `%${search}%` } },
         ],
       },
     });
 
-    if (!users) {
-      return res.status(404).json({ message: "No users found" });
-    }
-
     return res.status(200).json({ users });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+exports.uploadFile = [
+  upload.single("file"),
+  async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      const fileName = `uploads/${uuidv4()}-${req.file.originalname}`;
+      const params = {
+        Bucket: process.env.BUCKET_NAME,
+        Key: fileName,
+        Body: req.file.buffer,
+        ACL: "public-read",
+      };
+
+      // Upload to S3
+      s3.upload(params, (err, data) => {
+        if (err) {
+          console.error("Error uploading file:", err);
+          return res.status(500).json({ message: "Error uploading file" });
+        }
+
+        return res.status(201).json({
+          message: "File uploaded successfully",
+          fileUrl: data.Location,
+        });
+      });
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      return res
+        .status(500)
+        .json({ message: "Error uploading file", error: error.message });
+    }
+  },
+];

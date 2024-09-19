@@ -44,6 +44,7 @@ async function fetchMessages(page, groupId) {
   } catch (err) {
     console.log(err);
     alert("Please login to view messages");
+    console.log(err);
     localStorage.clear();
     window.location.href = "./login.html";
   }
@@ -51,16 +52,47 @@ async function fetchMessages(page, groupId) {
 
 async function handleMsgSubmit(event) {
   event.preventDefault();
+
   const messageInput = document.getElementById("message-input");
-  const message = messageInput.value;
+  const fileInput = document.getElementById("file-input");
+  const message = messageInput.value.trim();
+
+  let fileUrl = null;
+
+  if (fileInput.files.length > 0) {
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:4000/api/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: token,
+          },
+        }
+      );
+      fileUrl = response.data.fileUrl;
+
+      document.getElementById("file-preview-container").style.display = "none";
+    } catch (error) {
+      alert("Error uploading file, please try again");
+      return;
+    }
+  }
 
   socket.emit("sendMessage", {
-    message,
+    message: message.length > 0 ? message : "file sent",
     groupId: currentGroupId,
+    fileUrl: fileUrl || null,
     token,
   });
 
+  // Clear inputs
   messageInput.value = "";
+  fileInput.value = "";
   currentPage = 1;
 }
 
@@ -77,26 +109,30 @@ function renderSentMessage(messages) {
     message.className =
       msg.userId === currentUserId ? "message sender" : "message receiver";
 
+    const content = msg.fileUrl
+      ? `<img src="${msg.fileUrl}" alt="Sent image" class="message-file" />`
+      : `<p>${msg.message}</p>`;
+
     message.innerHTML = `
-          <div class="message-content">
-              <div class="message-info">
-                  <span class="username">${
-                    msg.userId === currentUserId ? "~You" : `~${msg.senderName}`
-                  }  ${
-      msg.userId != currentUserId
-        ? `<span class="message-timestamp">new</span>`
-        : ` <span class="timestamp">${new Date(
-            msg.createdAt
-          ).toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-          })}</span>`
-    }
-     
-              </div>
-              <p>${msg.message}</p>
-          </div>
-      `;
+      <div class="message-content">
+        <div class="message-info">
+          <span class="username">${
+            msg.userId === currentUserId ? "~You" : `~${msg.senderName}`
+          }</span>
+          ${
+            msg.userId != currentUserId
+              ? `<span class="message-timestamp">new</span>`
+              : `<span class="timestamp">${new Date(
+                  msg.createdAt
+                ).toLocaleTimeString("en-US", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}</span>`
+          }
+        </div>
+        ${content}
+      </div>
+    `;
 
     chatBox.appendChild(message);
 
@@ -111,6 +147,7 @@ function renderMessages(messages, prepend = false, groupId) {
 
   if (messages.length === 0 && !prepend) {
     chatBox.innerHTML = "<p>No messages found</p>";
+    return;
   }
 
   if (prepend) {
@@ -120,6 +157,11 @@ function renderMessages(messages, prepend = false, groupId) {
       const message = document.createElement("div");
       message.className =
         msg.userId === currentUserId ? "message sender" : "message receiver";
+
+      const content = msg.fileUrl
+        ? `<img src="${msg.fileUrl}" alt="Sent image" class="message-file" />`
+        : `<p>${msg.message}</p>`;
+
       message.innerHTML = `
         <div class="message-content">
           <div class="message-info">
@@ -133,9 +175,10 @@ function renderMessages(messages, prepend = false, groupId) {
               minute: "2-digit",
             })}</span>
           </div>
-          <p>${msg.message}</p>
+          ${content}
         </div>
       `;
+
       chatBox.insertBefore(message, chatBox.firstChild);
     });
 
@@ -150,16 +193,29 @@ function renderMessages(messages, prepend = false, groupId) {
           id="message-input"
           placeholder="Type a message..."
           min="1"
-          required
+        
         />
+   
+
+ <input
+    type="file"
+    id="file-input"
+    accept="image/*,video/*"
+    onchange="showFilePreview()"
+  />
+ 
         <button type="submit" id="send-button">Send</button>
+      
       </div>
+ <div id="file-preview-container" class="file-preview">
+  <img id="file-preview" src="" alt="File Preview" style="display: none;" />
+  <video id="video-preview" controls style="display: none;"></video>
+</div>
     `;
     if (!document.querySelector("#chat-area form")) {
       document.getElementById("chat-area").appendChild(sendForm);
     }
 
-    // Adjust scroll position
     chatBox.scrollTop = chatBox.scrollHeight - prevScrollHeight - 300;
   } else {
     chatBox.innerHTML = "";
@@ -168,6 +224,11 @@ function renderMessages(messages, prepend = false, groupId) {
       const message = document.createElement("div");
       message.className =
         msg.userId === currentUserId ? "message sender" : "message receiver";
+
+      const content = msg.fileUrl
+        ? `<img src="${msg.fileUrl}" alt="Sent image" class="message-file" />`
+        : `<p>${msg.message}</p>`;
+
       message.innerHTML = `
         <div class="message-content">
           <div class="message-info">
@@ -181,9 +242,10 @@ function renderMessages(messages, prepend = false, groupId) {
               minute: "2-digit",
             })}</span>
           </div>
-          <p>${msg.message}</p>
+          ${content}
         </div>
       `;
+
       chatBox.appendChild(message);
     });
 
@@ -198,10 +260,21 @@ function renderMessages(messages, prepend = false, groupId) {
           id="message-input"
           placeholder="Type a message..."
           min="1"
-          required
+         
         />
+    <input
+    type="file"
+    id="file-input"
+    accept="image/*,video/*"
+    onchange="showFilePreview()"
+  />
+
         <button type="submit" id="send-button">Send</button>
       </div>
+      <div id="file-preview-container" class="file-preview">
+  <img id="file-preview" src="" alt="File Preview" style="display: none;" />
+  <video id="video-preview" controls style="display: none;"></video>
+</div>
     `;
     if (!document.querySelector("#chat-area form")) {
       document.getElementById("chat-area").appendChild(sendForm);
@@ -542,4 +615,36 @@ async function handleRemoveMemberClick(id) {
     console.log(err);
     alert(err.response.data.message);
   }
+}
+
+function showFilePreview() {
+  const fileInput = document.getElementById("file-input");
+  const filePreview = document.getElementById("file-preview");
+  const videoPreview = document.getElementById("video-preview");
+  const filePreviewContainer = document.getElementById(
+    "file-preview-container"
+  );
+
+  const file = fileInput.files[0];
+
+  if (file) {
+    const fileURL = URL.createObjectURL(file);
+    filePreviewContainer.style.display = "block";
+
+    if (file.type.startsWith("image/")) {
+      filePreview.src = fileURL;
+      filePreview.style.display = "block";
+      videoPreview.style.display = "none";
+    } else if (file.type.startsWith("video/")) {
+      videoPreview.src = fileURL;
+      videoPreview.style.display = "block";
+      filePreview.style.display = "none";
+    }
+  } else {
+    filePreviewContainer.style.display = "none";
+  }
+}
+
+function sendMessage() {
+  // Your message sending logic here
 }
