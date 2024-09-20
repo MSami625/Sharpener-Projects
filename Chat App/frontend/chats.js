@@ -643,8 +643,8 @@ function showFilePreview() {
   } else {
     filePreviewContainer.style.display = "none";
   }
-}
 
-function sendMessage() {
-  // Your message sending logic here
+  const text_input = document.getElementById("message-input");
+
+  text_input.setAttribute("disabled", "true");
 }

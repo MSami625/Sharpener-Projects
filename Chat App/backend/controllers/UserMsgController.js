@@ -4,18 +4,19 @@ const { Op } = require("sequelize");
 const AWS = require("aws-sdk");
 const multer = require("multer");
 const multerS3 = require("multer-s3");
-const { v4: uuidv4 } = require("uuid"); // For unique file names
+const { v4: uuidv4 } = require("uuid");
+const ArchivedChat = require("../model/ArchivedChat");
 
 // Configure AWS S3
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: "ap-south-1", // Mumbai region
+  region: "ap-south-1",
 });
 
 const s3 = new AWS.S3();
 
-const storage = multer.memoryStorage(); // Store files in memory
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 exports.postUserMsg = async (req, res) => {
@@ -66,14 +67,24 @@ exports.getAllMessages = async (req, res) => {
     }
 
     const offset = (page - 1) * MAX_MESSAGES;
-    const messages = await Messages.findAll({
+
+    const currentMessages = await Messages.findAll({
+      where: { groupId },
+      order: [["createdAt", "DESC"]], // Most recent first
+      limit: MAX_MESSAGES,
+      offset: offset,
+    });
+
+    const archivedMessages = await ArchivedChat.findAll({
       where: { groupId },
       order: [["createdAt", "DESC"]],
       limit: MAX_MESSAGES,
       offset: offset,
     });
 
-    return res.status(200).json({ messages });
+    const combinedMessages = [...currentMessages, ...archivedMessages];
+
+    return res.status(200).json({ messages: combinedMessages });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Internal Server Error" });

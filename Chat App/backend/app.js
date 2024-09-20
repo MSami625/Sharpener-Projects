@@ -11,7 +11,11 @@ const Group = require("./model/Group");
 const signupRoute = require("./routes/authRoute");
 const UserMsgRoute = require("./routes/UserMsgRoute");
 const groupRoute = require("./routes/groupRoute");
+const ArchivedChat = require("./model/ArchivedChat");
+const { CronJob } = require("cron");
+const { Op } = require("sequelize");
 const axios = require("axios");
+const { arch } = require("os");
 
 const app = express();
 const server = http.createServer(app);
@@ -43,6 +47,55 @@ Group.belongsToMany(User, { through: "UserGroups" });
 app.use("/api", signupRoute);
 app.use("/api", UserMsgRoute);
 app.use("/api", groupRoute);
+
+// Cron job runs at  every midnight
+
+const archiveOldMessages = async () => {
+  try {
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    const oldMessages = await Messages.findAll({
+      where: {
+        createdAt: {
+          [Op.lt]: oneDayAgo,
+        },
+      },
+    });
+
+    if (oldMessages.length > 0) {
+      await ArchivedChat.bulkCreate(
+        oldMessages.map((msg) => ({
+          message: msg.message,
+          fileUrl: msg.fileUrl,
+          groupId: msg.groupId,
+          userId: msg.userId,
+          createdAt: msg.createdAt,
+        }))
+      );
+
+      await Messages.destroy({
+        where: {
+          createdAt: {
+            [Op.lt]: oneDayAgo,
+          },
+        },
+      });
+
+      console.log(`Archived ${oldMessages.length} old messages.`);
+    } else {
+      console.log("No messages to archive.");
+    }
+  } catch (error) {
+    console.error("Error during archiving messages:", error);
+  }
+};
+
+const job = new CronJob("0 0 * * *", async () => {
+  console.log("Starting the archiving process...");
+  await archiveOldMessages();
+});
+
+job.start();
 
 // Socket.IO Connection
 io.on("connection", (socket) => {
