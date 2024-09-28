@@ -70,7 +70,7 @@ exports.getAllMessages = async (req, res) => {
 
     const currentMessages = await Messages.findAll({
       where: { groupId },
-      order: [["createdAt", "DESC"]], // Most recent first
+      order: [["createdAt", "DESC"]],
       limit: MAX_MESSAGES,
       offset: offset,
     });
