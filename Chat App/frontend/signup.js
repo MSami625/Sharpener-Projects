@@ -1,4 +1,5 @@
 async function handleSignUp(e) {
+  let backendapi = "";
   e.preventDefault();
 
   try {
@@ -7,7 +8,7 @@ async function handleSignUp(e) {
     let name = document.getElementById("name").value;
     let phoneNumber = document.getElementById("phone").value;
 
-    const response = await axios.post("http://localhost:4000/api/user/signup", {
+    const response = await axios.post(`${backendapi}/api/user/signup`, {
       email: email,
       password: password,
       name: name,

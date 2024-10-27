@@ -1,7 +1,10 @@
 let currentPage = 1;
 let loadingMessages = false;
 var adminUsers = [];
-const socket = io("http://localhost:4000");
+
+let backendapi = "";
+
+const socket = io(`${backendapi}`);
 
 const token = localStorage.getItem("token");
 
@@ -19,7 +22,7 @@ async function fetchMessages(page, groupId) {
     loadingMessages = true;
 
     const response = await axios.get(
-      `http://localhost:4000/api/users/messages?page=${page}&groupId=${groupId}`,
+      `${backendapi}/api/users/messages?page=${page}&groupId=${groupId}`,
 
       {
         headers: {
@@ -64,16 +67,12 @@ async function handleMsgSubmit(event) {
     formData.append("file", fileInput.files[0]);
 
     try {
-      const response = await axios.post(
-        "http://localhost:4000/api/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: token,
-          },
-        }
-      );
+      const response = await axios.post(`${backendapi}/api/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: token,
+        },
+      });
       fileUrl = response.data.fileUrl;
 
       document.getElementById("file-preview-container").style.display = "none";
@@ -311,7 +310,7 @@ async function fetchGroups() {
   const token = localStorage.getItem("token");
 
   try {
-    const response = await axios.get("http://localhost:4000/api/getGroups", {
+    const response = await axios.get(`${backendapi}/api/getGroups`, {
       headers: {
         Authorization: token,
       },
@@ -394,14 +393,11 @@ async function handleGroupClick(buttonElement) {
 // Function to fetch group details from the server
 async function fetchGroupDetails(groupId) {
   const token = localStorage.getItem("token");
-  const response = await axios.get(
-    `http://localhost:4000/api/groups/${groupId}`,
-    {
-      headers: {
-        Authorization: token,
-      },
-    }
-  );
+  const response = await axios.get(`${backendapi}/api/groups/${groupId}`, {
+    headers: {
+      Authorization: token,
+    },
+  });
   return response.data;
 }
 
@@ -414,7 +410,7 @@ async function handleGroupSubmit(e) {
 
   try {
     await axios.post(
-      "http://localhost:4000/api/user/createGroup",
+      `${backendapi}/api/user/createGroup`,
       {
         groupName,
         groupDescription,
@@ -453,9 +449,7 @@ async function searchUsers(value) {
 
     try {
       const response = await axios.get(
-        `http://localhost:4000/api/users/search?name=${encodeURIComponent(
-          value
-        )}`,
+        `${backendapi}/api/users/search?name=${encodeURIComponent(value)}`,
         {
           headers: {
             Authorization: token,
@@ -506,7 +500,7 @@ async function handleAddMemberClick(id) {
 
   try {
     const response = await axios.post(
-      "http://localhost:4000/api/group/addMember",
+      `${backendapi}/api/group/addMember`,
       {
         id,
         groupId,
@@ -544,7 +538,7 @@ async function fetchCurrentGroupMembers() {
 
   try {
     const response = await axios.get(
-      `http://localhost:4000/api/groupmembers/${groupId}`,
+      `${backendapi}/api/groupmembers/${groupId}`,
       {
         headers: {
           Authorization: token,
@@ -600,7 +594,7 @@ async function handleRemoveMemberClick(id) {
 
   try {
     const response = await axios.delete(
-      `http://localhost:4000/api/group/removeMember?id=${id}&groupId=${groupId}`,
+      `${backendapi}/api/group/removeMember?id=${id}&groupId=${groupId}`,
       {
         headers: {
           Authorization: token,

@@ -3,7 +3,7 @@ const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
 const cors = require("cors");
-const jwt = require("jsonwebtoken");
+// const jwt = require("jsonwebtoken");
 const sequelize = require("./utils/database");
 const User = require("./model/User");
 const Messages = require("./model/Messages");
@@ -15,13 +15,14 @@ const ArchivedChat = require("./model/ArchivedChat");
 const { CronJob } = require("cron");
 const { Op } = require("sequelize");
 const axios = require("axios");
+const path = require("path");
 const { arch } = require("os");
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "http://127.0.0.1:5500",
+    origin: "*",
     methods: ["GET", "POST"],
     allowedHeaders: ["Authorization"],
     credentials: true,
@@ -43,6 +44,8 @@ Messages.belongsTo(Group, { constraints: true, onDelete: "CASCADE" });
 
 User.belongsToMany(Group, { through: "UserGroups" });
 Group.belongsToMany(User, { through: "UserGroups" });
+
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/api", signupRoute);
 app.use("/api", UserMsgRoute);
@@ -141,7 +144,6 @@ io.on("connection", (socket) => {
 
 sequelize
   .sync()
-  // .sync({ force: true })
   .then(() => {
     server.listen(4000, () => {
       console.log("Server is running on port 4000");
@@ -150,3 +152,5 @@ sequelize
   .catch((err) => {
     console.log(err);
   });
+
+module.exports = app;

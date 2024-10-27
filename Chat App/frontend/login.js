@@ -1,11 +1,12 @@
 async function handleLogin(e) {
+  let backendapi = "";
   try {
     e.preventDefault();
     localStorage.clear();
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
-    const response = await axios.post("http://localhost:4000/api/user/login", {
+    const response = await axios.post(`${backendapi}/api/user/login`, {
       email: email,
       password: password,
     });
