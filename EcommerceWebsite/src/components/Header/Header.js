@@ -3,6 +3,7 @@ import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Cart from "../cart/Cart";
 import CartContext from "../Store/CartContext";
+import AuthContext from "../Store/AuthContext";
 import "./Header.css";
 
 const Header = () => {
@@ -13,6 +14,7 @@ const Header = () => {
   };
 
   const cartCtx = useContext(CartContext);
+  const authCtx = useContext(AuthContext);
 
   //calculating total quantity in cart
   let totalAmount = 0;
@@ -24,11 +26,16 @@ const Header = () => {
         <div className="links">
           <Link to="/">Home</Link>
         </div>
-        <div className="links">
-          <Link to="/store">Store</Link>
-        </div>
+        {authCtx.isLoggedIn && (
+          <div className="links">
+            <Link to="/store">Store</Link>
+          </div>
+        )}
         <div className="links">
           <Link to="/about">About</Link>
+        </div>
+        <div className="links">
+          <Link to="/login">Login</Link>
         </div>
         <div className="links">
           <Link to="/contact-us">Contact Us</Link>
