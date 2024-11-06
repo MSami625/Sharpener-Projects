@@ -9,7 +9,7 @@ const Cart = ({ showCartHandler }) => {
   //calculate total price
   let totalPrice = 0;
   cartCtx.items.map(
-    (item) => (totalPrice += Number(item.quantity) * Number(item.price))
+    (item) => (totalPrice += Number(item.items.quantity) * Number(item.items.price))
   );
 
   return (

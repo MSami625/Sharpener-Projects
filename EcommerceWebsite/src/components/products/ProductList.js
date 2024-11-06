@@ -1,6 +1,7 @@
 import { Card, Button, Container, Row, Col } from "react-bootstrap";
 import { useContext } from "react";
 import CartContext from "../Store/CartContext";
+import AuthContext from "../Store/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { routePath } from "../routers/Routers";
 
@@ -41,14 +42,15 @@ const ProductList = () => {
   ];
 
   const cartCtx = useContext(CartContext);
+  const authCtx = useContext(AuthContext);
   const navigate = useNavigate();
 
   const productClickHandler = () => {
     navigate(routePath.ProductPage);
   };
 
-  const addItemToCart = (item) => {
-    cartCtx.addItem(item);
+  const addItemToCart = (item, email) => {
+    cartCtx.addItem(item, email);
   };
 
   return (
@@ -71,7 +73,7 @@ const ProductList = () => {
                   <Card.Text className="pt-3">${product.price}</Card.Text>
                   <Button
                     variant="primary"
-                    onClick={() => addItemToCart(product)}
+                    onClick={() => addItemToCart(product, authCtx.email)}
                   >
                     Add to Cart
                   </Button>
