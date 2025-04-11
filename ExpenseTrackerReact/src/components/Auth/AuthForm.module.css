@@ -1,0 +1,145 @@
+.auth {
+  margin: 4rem auto;
+  width: 100%;
+  max-width: 28rem;
+  background: linear-gradient(145deg, #000000, #434343);
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  padding: 2rem;
+  text-align: center;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.auth h1 {
+  font-size: 2rem;
+  color: white;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.control {
+  margin-bottom: 1.2rem;
+}
+
+.control label {
+  display: block;
+  color: #ffffff;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.control label:hover {
+  color: #bbbbbb;
+}
+
+.control input {
+  font: inherit;
+  background-color: #333333;
+  color: white;
+  border: 1px solid #555555;
+  border-radius: 6px;
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.control input:focus {
+  outline: none;
+  border-color: #ffffff;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.6);
+}
+
+.control input::placeholder {
+  color: #bbbbbb;
+  font-style: italic;
+}
+
+.actions {
+  margin-top: 1.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.actions button {
+  cursor: pointer;
+  font: inherit;
+  color: white;
+  background-color: #555555;
+  border: 2px solid #555555;
+  border-radius: 25px;
+  padding: 0.8rem 3rem;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.actions button:hover {
+  background-color: #444444;
+  border-color: #444444;
+  box-shadow: 0 6px 20px rgba(68, 68, 68, 0.3);
+}
+
+.actions button:active {
+  background-color: #333333;
+  border-color: #333333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.actions .toggle {
+  margin-top: 1rem;
+  background-color: transparent;
+  color: #bbbbbb;
+  border: none;
+  padding: 0.3rem 1.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.actions .toggle:hover {
+  color: #ffffff;
+}
+
+.actions .toggle:focus {
+  outline: none;
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .auth {
+    padding: 1.5rem;
+    width: 90%;
+  }
+
+  .control input {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .actions button {
+    padding: 0.6rem 2.5rem;
+    font-size: 0.95rem;
+  }
+
+  .actions .toggle {
+    padding: 0.25rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}
