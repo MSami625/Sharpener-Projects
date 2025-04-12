@@ -2,6 +2,7 @@ import { useState, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import AuthContext from "../../Store/AuthContext";
+import VerifyEmail from "./VerifyEmail";
 import classes from "./AuthForm.module.css";
 
 const AuthForm = () => {
@@ -49,10 +50,10 @@ const AuthForm = () => {
     let URL;
     if (isLogin) {
       URL =
-        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBRZh5Nx5Rhg_EVX5RfKogKtVjOVHCk_1A";
+        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCprTZVW6b9fM51Dp_WL5C-T5yTGXa7t9s";
     } else if (isFormValid) {
       URL =
-        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBRZh5Nx5Rhg_EVX5RfKogKtVjOVHCk_1A";
+        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCprTZVW6b9fM51Dp_WL5C-T5yTGXa7t9s";
     }
     fetch(URL, {
       method: "POST",
@@ -79,7 +80,7 @@ const AuthForm = () => {
       })
       .then((data) => {
         authCtx.login(data.idToken);
-        navigate("/");
+        // navigate("/");
       })
       .catch((err) => {
         alert(err.message);
@@ -88,58 +89,66 @@ const AuthForm = () => {
 
   return (
     <section className={classes.auth}>
-      {error && <p style={{ color: "red", textAlign: "start" }}>*{error}</p>}
-      <h1>{isLogin ? "Login" : "Sign Up"}</h1>
-      <form onSubmit={submitHandler}>
-        <div className={classes.control}>
-          <label htmlFor="email">Email</label>
-          <input type="email" id="email" required ref={emailInputRef} />
-        </div>
-        <div className={classes.control}>
-          {isLogin && (
-            <div>
-              <label htmlFor="password">Password</label>
-              <input
-                type="password"
-                id="password"
-                required
-                ref={passwordInputRef}
-              />
+      {authCtx.isLoggedIn ? (
+        <VerifyEmail />
+      ) : (
+        <div>
+          {error && (
+            <p style={{ color: "red", textAlign: "start" }}>*{error}</p>
+          )}
+          <h1>{isLogin ? "Login" : "Sign Up"}</h1>
+          <form onSubmit={submitHandler}>
+            <div className={classes.control}>
+              <label htmlFor="email">Email</label>
+              <input type="email" id="email" required ref={emailInputRef} />
             </div>
-          )}
-          {!isLogin && (
-            <div>
-              <label htmlFor="password">Password</label>
-              <input
-                type="password"
-                id="password"
-                required
-                ref={passwordInputRef}
-              />
-              <label htmlFor="password">confirm Password</label>
-              <input
-                type="password"
-                id="confirmPassword"
-                required
-                ref={confirmPasswordInputRef}
-              />
+            <div className={classes.control}>
+              {isLogin && (
+                <div>
+                  <label htmlFor="password">Password</label>
+                  <input
+                    type="password"
+                    id="password"
+                    required
+                    ref={passwordInputRef}
+                  />
+                </div>
+              )}
+              {!isLogin && (
+                <div>
+                  <label htmlFor="password">Password</label>
+                  <input
+                    type="password"
+                    id="password"
+                    required
+                    ref={passwordInputRef}
+                  />
+                  <label htmlFor="password">confirm Password</label>
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    required
+                    ref={confirmPasswordInputRef}
+                  />
+                </div>
+              )}
             </div>
-          )}
+            <div className={classes.actions}>
+              {!isLoading && (
+                <button>{isLogin ? "Login" : "Create Account"}</button>
+              )}
+              {isLoading && <p>Sending request...</p>}
+              <button
+                type="button"
+                className={classes.toggle}
+                onClick={swithcAuthModeHandler}
+              >
+                {isLogin ? "Create new account" : "have an account? Login"}
+              </button>
+            </div>
+          </form>
         </div>
-        <div className={classes.actions}>
-          {!isLoading && (
-            <button>{isLogin ? "Login" : "Create Account"}</button>
-          )}
-          {isLoading && <p>Sending request...</p>}
-          <button
-            type="button"
-            className={classes.toggle}
-            onClick={swithcAuthModeHandler}
-          >
-            {isLogin ? "Create new account" : "have an account? Login"}
-          </button>
-        </div>
-      </form>
+      )}
     </section>
   );
 };
