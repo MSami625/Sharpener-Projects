@@ -9,25 +9,28 @@ import { AuthContextProvider } from "./Store/AuthContext";
 import AuthContext from "./Store/AuthContext";
 import { useContext } from "react";
 import ForgetPassword from "./components/Auth/ForgetPassword";
+import { ExpenseContextProvider } from "./Store/ExpenseContext";
 
 function App() {
   const authCtx = useContext(AuthContext);
 
   return (
-    <AuthContextProvider>
-      <Router>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            {!authCtx.isLoggedIn && (
-              <Route path="/auth" element={<AuthPage />} />
-            )}
-            <Route path="/profile" element={<UserProfile />} />
-            <Route path="/forget-password" element={<ForgetPassword />} />
-          </Routes>
-        </Layout>
-      </Router>
-    </AuthContextProvider>
+    <ExpenseContextProvider>
+      <AuthContextProvider>
+        <Router>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              {!authCtx.isLoggedIn && (
+                <Route path="/auth" element={<AuthPage />} />
+              )}
+              <Route path="/profile" element={<UserProfile />} />
+              <Route path="/forget-password" element={<ForgetPassword />} />
+            </Routes>
+          </Layout>
+        </Router>
+      </AuthContextProvider>
+    </ExpenseContextProvider>
   );
 }
 
