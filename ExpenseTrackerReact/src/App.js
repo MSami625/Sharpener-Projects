@@ -8,6 +8,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { AuthContextProvider } from "./Store/AuthContext";
 import AuthContext from "./Store/AuthContext";
 import { useContext } from "react";
+import ForgetPassword from "./components/Auth/ForgetPassword";
 
 function App() {
   const authCtx = useContext(AuthContext);
@@ -22,6 +23,7 @@ function App() {
               <Route path="/auth" element={<AuthPage />} />
             )}
             <Route path="/profile" element={<UserProfile />} />
+            <Route path="/forget-password" element={<ForgetPassword />} />
           </Routes>
         </Layout>
       </Router>

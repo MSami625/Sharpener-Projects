@@ -1,5 +1,5 @@
 import { useState, useRef, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import AuthContext from "../../Store/AuthContext";
 import VerifyEmail from "./VerifyEmail";
@@ -133,6 +133,11 @@ const AuthForm = () => {
                 </div>
               )}
             </div>
+            {isLogin && (
+              <div className={classes.link}>
+                <Link to="/forget-password">Forgot Password?</Link>
+              </div>
+            )}
             <div className={classes.actions}>
               {!isLoading && (
                 <button>{isLogin ? "Login" : "Create Account"}</button>
