@@ -1,24 +1,29 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { expenseActions } from "./expense-slice";
 
 const ExpenseContext = React.createContext({
   expenses: [],
   fetchExpense: () => {},
   addExpense: (expense) => {},
+  updateExpense: (expense) => {},
   removeExpense: (expense) => {},
 });
 
 export const ExpenseContextProvider = (props) => {
   const [expenseItems, setExpenseItems] = useState([]);
 
-  let userEmail;
+  //redux dispatch
+  const dispatch = useDispatch();
+
+  let userEmail = localStorage.getItem("email");
+  if (userEmail) {
+    userEmail = userEmail.replace(/[^a-zA-Z0-9]/g, "");
+  }
+
   const api = "https://expense-tracker-cea1f-default-rtdb.firebaseio.com/";
 
   const fetchExpenseHandler = async () => {
-    userEmail = localStorage.getItem("email");
-    if (userEmail) {
-      userEmail = userEmail.replace(/[^a-zA-Z0-9]/g, "");
-    }
-
     if (userEmail) {
       const url = `${api}/expenses${userEmail}.json`;
 
@@ -38,6 +43,9 @@ export const ExpenseContextProvider = (props) => {
             moneySpent: expense.moneySpent,
           };
         });
+        //dispatch actions
+        dispatch(expenseActions.setItems(expenseList));
+
         setExpenseItems(expenseList);
       } catch (error) {
         console.log(error);
@@ -46,11 +54,6 @@ export const ExpenseContextProvider = (props) => {
   };
 
   const addExpenseHandler = (item) => {
-    userEmail = localStorage.getItem("email");
-    if (userEmail) {
-      userEmail = userEmail.replace(/[^a-zA-Z0-9]/g, "");
-    }
-
     if (userEmail) {
       const url = `${api}/expenses${userEmail}.json`;
       fetch(url, {
@@ -68,7 +71,12 @@ export const ExpenseContextProvider = (props) => {
           }
         })
         .then((data) => {
+          // adding id value in item and then adding the item to expenseItems
+          item = { ...item, id: data.name };
           setExpenseItems([...expenseItems, item]);
+
+          //dispatch actions
+          dispatch(expenseActions.addItem(item));
         })
         .catch((error) => {
           console.log(error);
@@ -76,12 +84,72 @@ export const ExpenseContextProvider = (props) => {
     }
   };
 
-  const removeExpenseHandler = () => {};
+  const updateExpenseHandler = (updatedExpense) => {
+    if (userEmail) {
+      const url = `${api}/expenses${userEmail}/${updatedExpense.id}.json`;
+      fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedExpense),
+      })
+        .then((response) => {
+          if (response.ok) {
+            console.log("Expense Updated");
+            //update expense from expenseItems
+            setExpenseItems((prevExpenseItems) =>
+              prevExpenseItems.map((expense) =>
+                expense.id === updatedExpense.id ? updatedExpense : expense
+              )
+            );
+
+            //dispatch actions
+            dispatch(expenseActions.editItem({ item: updatedExpense }));
+          } else {
+            console.error("error while updating item");
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  };
+
+  const removeExpenseHandler = (expenseId) => {
+    if (userEmail) {
+      const url = `${api}/expenses${userEmail}/${expenseId}.json`;
+      fetch(url, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => {
+          if (response.ok) {
+            console.log("Expense successfuly deleted");
+            //remove expense from expenseItems
+            setExpenseItems((prevExpenseItems) =>
+              prevExpenseItems.filter((expense) => expense.id !== expenseId)
+            );
+
+            //dispatch actions
+            dispatch(expenseActions.removeItem({ id: expenseId }));
+          } else {
+            console.error("error while deleting item");
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  };
 
   const expenseContext = {
     expenses: expenseItems,
     fetchExpense: fetchExpenseHandler,
     addExpense: addExpenseHandler,
+    updateExpense: updateExpenseHandler,
     removeExpense: removeExpenseHandler,
   };
 

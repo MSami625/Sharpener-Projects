@@ -12,6 +12,8 @@
 }
 
 .expense-item {
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 10px;
   padding: 10px;
   border: 1px solid #ccc;
@@ -21,4 +23,12 @@
 .expense-field {
   display: block;
   margin-bottom: 5px;
+}
+
+.btn {
+  margin-top: 14px;
+}
+
+.btn button {
+  margin-right: 5px;
 }
