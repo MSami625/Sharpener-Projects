@@ -12,7 +12,6 @@ const authSlice = createSlice({
   initialState: initialAuthState,
   reducers: {
     login(state, action) {
-
       console.log(action.payload.email);
 
       state.token = action.payload.token;
