@@ -1,20 +1,36 @@
-import { Fragment } from "react";
-import { useSelector } from "react-redux";
+import { Routes, Route } from "react-router-dom";
 
-import Counter from "./components/Counter";
-import Header from "./components/Header";
-import Auth from "./components/Auth";
-import UserProfile from "./components/UserProfile";
+import Layout from "./components/Layout/Layout";
+import UserProfile from "./components/Profile/UserProfile";
+import AuthPage from "./pages/AuthPage";
+import HomePage from "./pages/HomePage";
+import { BrowserRouter as Router } from "react-router-dom";
+import { AuthContextProvider } from "./Store/AuthContext";
+import AuthContext from "./Store/AuthContext";
+import { useContext } from "react";
+import ForgetPassword from "./components/Auth/ForgetPassword";
+import { ExpenseContextProvider } from "./Store/ExpenseContext";
 
 function App() {
-  const isAuth = useSelector((state) => state.auth.isAuthenticated);
+  const authCtx = useContext(AuthContext);
+
   return (
-    <Fragment>
-      <Header />
-      {!isAuth && <Auth />}
-      {isAuth && <UserProfile />}
-      <Counter />
-    </Fragment>
+    <ExpenseContextProvider>
+      <AuthContextProvider>
+        <Router>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              {!authCtx.isLoggedIn && (
+                <Route path="/auth" element={<AuthPage />} />
+              )}
+              <Route path="/profile" element={<UserProfile />} />
+              <Route path="/forget-password" element={<ForgetPassword />} />
+            </Routes>
+          </Layout>
+        </Router>
+      </AuthContextProvider>
+    </ExpenseContextProvider>
   );
 }
 
