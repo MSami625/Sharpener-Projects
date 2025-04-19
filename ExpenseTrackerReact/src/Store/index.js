@@ -1,9 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
-import uiSlice from "./ui-slice";
-import cartSlice from "./cart-slice";
+
+import authReducer from "./auth-slice";
+import expenseReducer from "./expense-slice";
+import themeReducer from "./theme-slice";
 
 const store = configureStore({
-  reducer: { ui: uiSlice.reducer, cart: cartSlice.reducer },
+  reducer: {
+    auth: authReducer,
+    expenseStore: expenseReducer,
+    theme: themeReducer,
+  },
 });
 
 export default store;
